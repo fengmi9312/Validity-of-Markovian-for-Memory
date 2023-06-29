@@ -21,7 +21,7 @@ The extension modules, experimental codes, figure codes and application package 
 - [Application](#Application)
 
 ## Paper
-The main text as well as the Supplementary Information can be downloaded either through ... or ...
+The main text as well as the Supplementary Information can be downloaded either through <a href = "https://github.com/fengmi9312/Validity-of-Markovian-for-Memory/raw/main/paper_and_SI.pdf">Link</a>.
 
 ## Dependencies
 Within the "Dependencies" folder, you'll find the data dependencies and C++ code that generates the module for conducting Monte Carlo simulations of the stratified SIR spreading dynamics model. This module plays a crucial role in the experimental and data generation processes that follow.
@@ -45,7 +45,7 @@ Readers can access the web-based application at <a href = "https://cns.hkbu.edu.
 
 ### Python Application 
 Readers can run it through source code as follows:
-- Download: The corresponding package could be downloaded via <a href="https://github.com/fengmi9312/Validity-of-Markovian-for-Memory//tree/main/Applications/Python_Application.zip">Python Application</a> (5 KB, version 1.0).
+- Download: The corresponding package could be downloaded via <a href="https://github.com/fengmi9312/Validity-of-Markovian-for-Memory/raw/main/Applications/Python_Application.zip">Python Application</a> (5 KB, version 1.0).
 - Installation: Extract the content of the enclosed Python_Application.zip file to a local directory.
 - Run: Run the corresponding python script files named "Distribution.py" or "Rectification.py".
 - Dependencies: numpy, scipy, and matplotlib.
