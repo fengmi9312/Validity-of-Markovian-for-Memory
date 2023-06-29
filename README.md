@@ -2,7 +2,7 @@
 
 The extension modules, experimental codes, figure codes and application package for the paper titled "Validity of Markovian modeling for transient memory-dependent epidemic dynamics"<sup>[1]</sup> 
 
-[Mi Feng](https://scholar.google.com/citations?user=09WNOQwAAAAJ&hl=en&oi=ao)<sup>1,2</sup>, [Liang Tian](https://physics.hkbu.edu.hk/people/tian-liang)<sup>1,3,\*</sup>, [Ying-cheng Lai](http://chaos1.la.asu.edu/~ylai1/)<sup>4,5</sup>, [Changsong Zhou](https://physics.hkbu.edu.hk/people/zhou-chang-song)<sup>1,2,3,\*</sup> 
+[Mi Feng](https://scholar.google.com/citations?user=09WNOQwAAAAJ&hl=en&oi=ao)<sup>1,2</sup>, [Liang Tian](https://physics.hkbu.edu.hk/people/tian-liang)<sup>1,3,\*</sup>, [Ying-Cheng Lai](http://chaos1.la.asu.edu/~ylai1/)<sup>4,5</sup>, [Changsong Zhou](https://physics.hkbu.edu.hk/people/zhou-chang-song)<sup>1,2,3,\*</sup> 
     
 <sup>*</sup>Correspondence: [liangtian@hkbu.edu.hk](mailto:liangtian@hkbu.edu.hk), [cszhou@hkbu.edu.hk](mailto:cszhou@hkbu.edu.hk)
  
@@ -41,7 +41,7 @@ Figure data will be available soon...
 we have developed two types of applications, namely a web-based and a Python version, to aid researchers in determining the generation time distribution, estimating the parameters of the Markovian dynamics in transient-state equivalence, and rectifying errors in $R_0$ and steady-state forecasting.
 
 ### Web-based Application
-Readers can access the web application by visiting .... The source code for the web application can be found in the folder "./application/web-based-application".
+Readers can access the web-based application at <a href = "https://cns.hkbu.edu.hk/toolbox/Validity_of_Markovian_for_Memory/main.html"></a> The source code for the web application can be found in the folder "./applications/Web-based_application".
 
 ### Python Application 
 Readers can run it through source code as follows:
