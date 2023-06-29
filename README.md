@@ -23,21 +23,21 @@ The extension modules, experimental codes, figure codes and application package 
 ## Paper
 The main text as well as the Supplementary Information can be downloaded either through ... or ...
 
-## Module Code
-Within the "extension modules" folder, you'll find the C++ code that generates the module for conducting Monte Carlo simulations of the stratified SIR spreading dynamics model. This module plays a crucial role in the experimental and data generation processes that follow.
+## Dependencies
+Within the "Dependencies" folder, you'll find the data dependencies and C++ code that generates the module for conducting Monte Carlo simulations of the stratified SIR spreading dynamics model. This module plays a crucial role in the experimental and data generation processes that follow.
 
-## Experiment Code
-The "Experiment Code" folder comprises the Python code responsible for generating all the experimental data presented in this paper.
+## Experimental Code
+The "Experimental_Code" folder comprises the Python code responsible for generating all the experimental data presented in this paper.
 
-## Experiment Code
-The folder titled "Data Code" contains the Python code that is utilized to generate the figure data based on the experimental data presented in this paper.
+## Data Code
+The folder titled "Data_Code" contains the Python code that is utilized to generate the figure data based on the experimental data presented in this paper.
 
 ## Figure Code
-Within the "Figure Code" folder, you will find the Python code responsible for extracting the valid figure data from the experimental data and plotting all the figures showcased in both the main text and supplementary information.
+Within the "Figure_Code" folder, you will find the Python code responsible for extracting the valid figure data from the experimental data and plotting all the figures showcased in both the main text and supplementary information.
 #### Figure Data
 Figure data will be available soon...
 
-## Application
+## Applications
 we have developed two types of applications, namely a web-based and a Python version, to aid researchers in determining the generation time distribution, estimating the parameters of the Markovian dynamics in transient-state equivalence, and rectifying errors in $R_0$ and steady-state forecasting.
 
 ### Web-based Application
@@ -45,7 +45,7 @@ Readers can access the web application by visiting .... The source code for the 
 
 ### Python Application 
 Readers can run it through source code as follows:
-- Download: The corresponding package could be downloaded via <a href="https://github.com/fengmi9312/Validity-of-Markovian-for-Memory//tree/main/Application/Python_Application.zip">Python Application</a> (5 KB, version 1.0).
+- Download: The corresponding package could be downloaded via <a href="https://github.com/fengmi9312/Validity-of-Markovian-for-Memory//tree/main/Applications/Python_Application.zip">Python Application</a> (5 KB, version 1.0).
 - Installation: Extract the content of the enclosed Python_Application.zip file to a local directory.
 - Run: Run the corresponding python script files named "Distribution.py" or "Rectification.py".
 - Dependencies: numpy, scipy, and matplotlib.
