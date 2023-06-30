@@ -21,7 +21,7 @@ The extension modules, experimental codes, figure codes and application package 
 - [Application](#Application)
 
 ## Paper
-The main text as well as the Supplementary Information can be downloaded either through <a href = "https://github.com/fengmi9312/Validity-of-Markovian-for-Memory/raw/main/paper_and_SI.pdf">Link</a> or ...
+The main text as well as the Supplementary Information can be downloaded through <a href = "https://github.com/fengmi9312/Validity-of-Markovian-for-Memory/raw/main/paper_and_SI.pdf">Link</a>. And the main text in arXiv is available at <a href="https://arxiv.org/pdf/2306.16864">arXiv</a>. The latex version can be downloaded via <a href="https://arxiv.org/e-print/2306.16864">source</a>.
 
 ## Dependencies
 Within the "Dependencies" folder, you'll find the data dependencies and C++ code that generates the module for conducting Monte Carlo simulations of the stratified SIR spreading dynamics model. This module plays a crucial role in the experimental and data generation processes that follow.
@@ -111,6 +111,6 @@ The total cumulative infected fraction at steady state, $\tilde{c}$, can be calc
 $$\tilde{c} = \sum_{l=0}^{n}{\tilde{c}_lp_l}.$$
 
 #### Reference
-1. Feng, M, et al. Validity of Markovian modeling for transient memory-dependent epidemic dynamics. arXiv 2023.xxxxx (2023).
-2. [Prem, K., Cook, A. R. & Jit, M. Projecting social contact matrices in 152 countries using contact surveys and demographic data. PLoS Comput. Biol. 13, e1005697 (2017).](https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1005697)
-3. [United Nations, Department of Economic and Social Affairs, Population Division. World population prospects 2019 (2021). Accessed on 29 June 2021.](https://population.un.org/wpp/)
+1. [Feng, M, et al. Validity of Markovian modeling for transient memory-dependent epidemic dynamics. arXiv:2306.16864 (2023)](https://arxiv.org/abs/2306.16864).
+2. [Prem, K., Cook, A. R. & Jit, M. Projecting social contact matrices in 152 countries using contact surveys and demographic data. PLoS Comput. Biol. 13, e1005697 (2017)](https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1005697).
+3. [United Nations, Department of Economic and Social Affairs, Population Division. World population prospects 2019 (2021). Accessed on 29 June 2021](https://population.un.org/wpp/).
