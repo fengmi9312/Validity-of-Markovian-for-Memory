@@ -41,7 +41,7 @@ Figure data will be available soon...
 we have developed two types of applications, namely a web-based and a Python version, to aid researchers in determining the generation time distribution, estimating the parameters of the Markovian dynamics in transient-state equivalence, and rectifying errors in $R_0$ and steady-state forecasting.
 
 ### Web-based Application
-Readers can access the web-based application at <a href = "https://cns.hkbu.edu.hk/toolbox/Validity_of_Markovian_for_Memory/main.html"></a> The source code for the web application can be found in the folder "./applications/Web-based_application".
+Readers can access the <a href = "https://cns.hkbu.edu.hk/toolbox/Validity_of_Markovian_for_Memory/main.html">web-based application</a> online. The source code for the web application can be found in the folder "./applications/Web-based_application".
 
 ### Python Application 
 Readers can run it through source code as follows:
