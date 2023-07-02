@@ -330,7 +330,7 @@ if __name__ == '__main__':
     k_calc_obtain = sir_model(**calc_params)
     k = k_calc_obtain.get_k_from_steady(steady_prdt, target = 'c', prdt_method = 'calc', tol = 1e-10)
     steady_data = {}
-    writer = pd.ExcelWriter("real_vac_fitting_data/data_"+ disease[rank] + ".xlsx")
+    writer = pd.ExcelWriter("../Experimental_Data/real_vac_fitting_data/data_"+ disease[rank] + ".xlsx")
     for i in range(10):
         print(i)
         simu_once = ms.simu(**simu_structure_params)  

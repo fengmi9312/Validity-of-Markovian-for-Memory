@@ -91,14 +91,14 @@ if not using_imported_data:
             pd.DataFrame(_data[_key]).to_excel(_writer, sheet_name = _key)
         _writer.close()
     
-    export_to_file(figure_theories_data, './generated_data/theories_data(Figure_2).xlsx')
-    export_to_file(si_figure_percentile_data, './generated_data/percentile_data(Figure_S3).xlsx')
-    export_to_file(si_figure_markovian_time_data, './generated_data/markovian_time_data(Figure_S1).xlsx')
-    export_to_file(si_figure_error_percentile_data, './generated_data/error_percentile_data(Figure_S2).xlsx')
-    export_to_file(figure_analysis_data, './generated_data/analysis_data(Figure_4).xlsx')
-    export_to_file(fitting_period_data, './generated_data/fitting_period_data(Figure_4_and_5).xlsx')
-    export_to_file(figure_forecasting_data, './generated_data/forecasting_data(Figure_5).xlsx')
-    export_to_file(figure_prevention_data, './generated_data/prevention_data(Figure_6).xlsx')
+    export_to_file(figure_theories_data, '../Figure_Data/theories_data(Figure_2).xlsx')
+    export_to_file(si_figure_percentile_data, '../Figure_Data/percentile_data(Figure_S3).xlsx')
+    export_to_file(si_figure_markovian_time_data, '../Figure_Data/markovian_time_data(Figure_S1).xlsx')
+    export_to_file(si_figure_error_percentile_data, '../Figure_Data/error_percentile_data(Figure_S2).xlsx')
+    export_to_file(figure_analysis_data, '../Figure_Data/analysis_data(Figure_4).xlsx')
+    export_to_file(fitting_period_data, '../Figure_Data/fitting_period_data(Figure_4_and_5).xlsx')
+    export_to_file(figure_forecasting_data, '../Figure_Data/forecasting_data(Figure_5).xlsx')
+    export_to_file(figure_prevention_data, '../Figure_Data/prevention_data(Figure_6).xlsx')
     
     import figure_func
     
@@ -126,13 +126,13 @@ else:
                 _data[_key][_key1] = _data[_key][_key1].to_numpy()
         return _data
     
-    figure_theories_data_imported = import_from_file('./generated_data/theories_data(Figure_2).xlsx')
-    si_figure_percentile_data_imported = import_from_file('./generated_data/percentile_data(Figure_S3).xlsx')
-    si_figure_markovian_time_data_imported = import_from_file('./generated_data/markovian_time_data(Figure_S1).xlsx')
-    si_figure_error_percentile_data_imported = import_from_file('./generated_data/error_percentile_data(Figure_S2).xlsx')
-    figure_analysis_data_imported = import_from_file('./generated_data/analysis_data(Figure_3).xlsx')
-    figure_forecasting_data_imported = import_from_file('./generated_data/forecasting_data(Figure_4).xlsx')
-    figure_prevention_data_imported = import_from_file('./generated_data/prevention_data(Figure_5).xlsx')
+    figure_theories_data_imported = import_from_file('../Figure_Data/theories_data(Figure_2).xlsx')
+    si_figure_percentile_data_imported = import_from_file('../Figure_Data/percentile_data(Figure_S3).xlsx')
+    si_figure_markovian_time_data_imported = import_from_file('../Figure_Data/markovian_time_data(Figure_S1).xlsx')
+    si_figure_error_percentile_data_imported = import_from_file('../Figure_Data/error_percentile_data(Figure_S2).xlsx')
+    figure_analysis_data_imported = import_from_file('../Figure_Data/analysis_data(Figure_3).xlsx')
+    figure_forecasting_data_imported = import_from_file('../Figure_Data/forecasting_data(Figure_4).xlsx')
+    figure_prevention_data_imported = import_from_file('../Figure_Data/prevention_data(Figure_5).xlsx')
     
     import figure_func
 

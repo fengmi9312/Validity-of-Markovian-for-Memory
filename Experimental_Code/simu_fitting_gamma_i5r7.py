@@ -10,7 +10,6 @@ import data_import as di
 from model_n import get_general_fitting_data, calc_general_k, get_calc_data
 import metapopulation_simulation as ms
 from scipy.special import gamma, gammainc
-import scipy.special as sc
 
 np.random.seed(0)
 
@@ -21,9 +20,9 @@ def get_mean_from_weibull(alpha, beta):
 def get_beta_from_weibull(alpha, mean_value):
     return mean_value / gamma(1 + 1.0 / alpha)
 
-def lognormal_survivals(_alpha, _beta, _length, _step):
-    _tau = np.arange(1, _length) * _step
-    return np.append(1, 0.5 - 0.5 * sc.erf((np.log(_tau) - _beta) / (_alpha * (2 ** 0.5))))
+def gamma_survivals(_alpha, _beta, _length, _step):
+    _tau = _tau = np.arange(_length) * _step
+    return 1 - gammainc(_alpha, _tau / _beta)
 
 def split_int(x, a):
     tmp = [a] * (x // a)
@@ -78,18 +77,20 @@ del param_simu_obtain
 ##########################################################
 
 if __name__ == '__main__':
-    mean_inf = 5
+    alpha_inf = 3
+    mean_inf = 7
+    alpha_rem = 2
     mean_rem = 7
     p_num = 100
-    t_num = 100
+    t_num = 200
     import pandas as pd
     from mpi4py import MPI
     comm = MPI.COMM_WORLD
     size = comm.Get_size()
     rank = comm.Get_rank()
     pair_list = []
-    for i in np.arange(36, 5, -1):
-        for j in np.arange(6, 37):
+    for i in np.arange(24, -7, -1):
+        for j in np.arange(-6, 25):
             pair_list.append((i, j))
     group_param_list = [[] for i in range(t_num)]
     for i in range(t_num):
@@ -99,19 +100,19 @@ if __name__ == '__main__':
     for pair_item in group_param_list[rank]:
         add_mark = False
         inf_pow, rem_pow = pair_item
-        alpha_inf = inf_pow * 0.05
-        alpha_rem = rem_pow * 0.05
+        alpha_inf = np.e ** (inf_pow * 0.05)
+        alpha_rem = np.e ** (rem_pow * 0.05)
         file_mark = str(inf_pow) + "_" + str(rem_pow)
-        if (inf_pow, rem_pow) == (6, 6) or (inf_pow, rem_pow) == (6, 36) or (inf_pow, rem_pow) == (36, 6) or \
-        (inf_pow, rem_pow) == (36, 36) or (inf_pow, rem_pow) == (21, 21):
+        if (inf_pow, rem_pow) == (-6, -6) or (inf_pow, rem_pow) == (-6, 24) or (inf_pow, rem_pow) == (24, -6) or \
+        (inf_pow, rem_pow) == (24, 24) or (inf_pow, rem_pow) == (9, 9):
             add_mark = True
-        beta_inf = np.log(mean_inf) - (alpha_inf ** 2) / 2
-        beta_rem = np.log(mean_rem) - (alpha_rem ** 2) / 2
+        beta_inf = mean_inf / alpha_inf
+        beta_rem = mean_rem / alpha_rem
         if add_mark:
-            writer_add = pd.ExcelWriter("lognormal_fitting_data/data_curves_"+ file_mark + ".xlsx")
-        writer = pd.ExcelWriter("lognormal_fitting_data/data_"+ file_mark + ".xlsx")
-        survivals_inf = lognormal_survivals(alpha_inf, beta_inf, occur_length, step)
-        survivals_rem = lognormal_survivals(alpha_rem, beta_rem, occur_length, step)
+            writer_add = pd.ExcelWriter("../Experimental_Data/gamma_fitting_data/data_curves_"+ file_mark + ".xlsx")
+        writer = pd.ExcelWriter("../Experimental_Data/gamma_fitting_data/data_"+ file_mark + ".xlsx")
+        survivals_inf = gamma_survivals(alpha_inf, beta_inf, occur_length, step)
+        survivals_rem = gamma_survivals(alpha_rem, beta_rem, occur_length, step)
         k = calc_general_k(survivals_inf, survivals_rem, steady_prdt, calc_params)
         param_list = {}
         res_list = {}

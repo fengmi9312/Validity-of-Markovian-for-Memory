@@ -60,7 +60,7 @@ if __name__ == '__main__':
     populations_from_simu = np.array(simu_once.get_populations())
     i0_from_simu = np.array(simu_once.get_i_amount_arr()) / np.array(simu_once.get_population_amounts())
     del simu_once
-    writer = pd.ExcelWriter("real_fitting_data/data_"+ disease[rank] + ".xlsx")
+    writer = pd.ExcelWriter("../Experimental_Data/real_fitting_data/data_"+ disease[rank] + ".xlsx")
     calc_params = {'i0': i0_from_simu, 'populations': populations_from_simu, 'contacts': params_adj['contacts'], 
                    'ifrs': params_adj['ifrs'], 'ylls': params_adj['ylls'], 
                    'contacts_prop': None, 'k': 1, 'occur_inf': None, 'occur_rem': None,

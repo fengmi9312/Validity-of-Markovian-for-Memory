@@ -108,8 +108,8 @@ if __name__ == '__main__':
         beta_inf = get_beta_from_weibull(alpha_inf, mean_inf)
         beta_rem = get_beta_from_weibull(alpha_rem, mean_rem)
         if add_mark:
-            writer_add = pd.ExcelWriter("fitting_data/data_curves_"+ file_mark + ".xlsx")
-        writer = pd.ExcelWriter("fitting_data/data_"+ file_mark + ".xlsx")
+            writer_add = pd.ExcelWriter("../Experimental_Data/fitting_data/data_curves_"+ file_mark + ".xlsx")
+        writer = pd.ExcelWriter("../Experimental_Datafitting_data/data_"+ file_mark + ".xlsx")
         k = calc_k(alpha_inf, beta_inf, alpha_rem, beta_rem, occur_length, steady_prdt, calc_params)
         param_list = {}
         res_list = {}

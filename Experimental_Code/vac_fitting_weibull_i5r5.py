@@ -75,10 +75,10 @@ del simu_test
 
 
 alpha_inf = 3
-mean_inf = 7
+mean_inf = 5
 beta_inf = get_beta_from_weibull(alpha_inf, mean_inf)
 alpha_rem = 2
-mean_rem = 7
+mean_rem = 5
 beta_rem = get_beta_from_weibull(alpha_rem, mean_rem)
 
 p_num = 100
@@ -104,9 +104,9 @@ for inf_pow, rem_pow in group_param_list[rank]:
         add_mark = True
     file_mark = str(inf_pow) + "_" + str(rem_pow)
     steady_data = {}
-    writer = pd.ExcelWriter("fitting_vac_data/data_vac_"+ file_mark + ".xlsx")
+    writer = pd.ExcelWriter("../Experimental_Data/fitting_vac_data/data_vac_"+ file_mark + ".xlsx")
     if add_mark:
-        writer_add = pd.ExcelWriter("fitting_vac_data/data_vac_curves_"+ file_mark + ".xlsx")
+        writer_add = pd.ExcelWriter("../Experimental_Data/fitting_vac_data/data_vac_curves_"+ file_mark + ".xlsx")
     for i in range(p_num):
         alpha_inf = np.e ** (inf_pow * 0.05)
         alpha_rem = np.e ** (rem_pow * 0.05)
