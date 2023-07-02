@@ -35,7 +35,7 @@ The folder titled "Data_Code" contains the Python code that is utilized to gener
 ## Figure Code
 Within the "Figure_Code" folder, you will find the Python code responsible for extracting the valid figure data from the experimental data and plotting all the figures showcased in both the main text and supplementary information.
 #### Figure Data
-Figure data will be available soon...
+Figure data are available at <a href="https://github.com/fengmi9312/Validity-of-Markovian-for-Memory/tree/main/Figure_Data">Figure_Data</a>.
 
 ## Applications
 we have developed two types of applications, namely a web-based and a Python version, to aid researchers in determining the generation time distribution, estimating the parameters of the Markovian dynamics in transient-state equivalence, and rectifying errors in $R_0$ and steady-state forecasting.
