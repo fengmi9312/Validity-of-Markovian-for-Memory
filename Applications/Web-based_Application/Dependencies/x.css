@@ -1,0 +1,84 @@
+@import url(https://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700);
+\:root {
+  font-size: 16px; }
+
+* {
+  font-family: "Open Sans", Helvetica, Arial, sans-serif; }
+
+body {
+  height: 100vh;
+  background: #F3F4F8; }
+
+.tabs-page {
+  position: relative; }
+  .tabs-page > .nav-tabs {
+    position: relative;
+    min-height: 50px;
+    margin: 0;
+    padding-left: 15px;
+    text-align: left;
+    cursor: auto;
+    border: none;
+    z-index: 1; }
+    .tabs-page > .nav-tabs li[role="presentation"] {
+      display: inline-block;
+      height: 50px;
+      border: none; }
+      .tabs-page > .nav-tabs li[role="presentation"]:not(:last-child) {
+        padding-right: 22px; }
+      .tabs-page > .nav-tabs li[role="presentation"] a[role="tab"] {
+        height: 50px;
+        margin: 0;
+        padding: 0px;
+        font-size: 0.875rem;
+        font-weight: 700;
+        text-transform: none;
+        text-align: center;
+        letter-spacing: 0.25px;
+        color: #BDC4D0;
+        background: none;
+        border: none;
+        line-height: 50px;
+        transition: color 0.3s ease, box-shadow 0.2s ease; }
+        .tabs-page > .nav-tabs li[role="presentation"] a[role="tab"]:hover {
+          color: #0075AD; }
+      .tabs-page > .nav-tabs li[role="presentation"].active a {
+        color: #0075AD;
+        box-shadow: inset 0 -2px 0 #0075AD;
+        background: none; }
+        .tabs-page > .nav-tabs li[role="presentation"].active a:hover, .tabs-page > .nav-tabs li[role="presentation"].active a:focus {
+          background: none;
+          border: none; }
+  .tabs-page > .tab-content {
+    position: relative;
+    min-height: 500px;
+    margin: 0;
+    padding: 0;
+    background: white;
+    border-top: 1px solid #edeef4;
+    border-bottom: 1px solid #edeef4; }
+
+.tabs-secondary {
+  position: relative;
+  text-align: center; }
+  .tabs-secondary > .nav-tabs {
+    display: inline-block;
+    margin: 0 auto 15px;
+    border-bottom: 1px solid #edeef4; }
+    .tabs-secondary > .nav-tabs li[role="presentation"]:not(:last-child) {
+      margin-right: 20px; }
+    .tabs-secondary > .nav-tabs li[role="presentation"] a[role="tab"] {
+      padding: 12px 0;
+      font-size: 0.6875rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.02rem;
+      color: #BDC4D0;
+      border: none !important;
+      background: none !important; }
+      .tabs-secondary > .nav-tabs li[role="presentation"] a[role="tab"]:hover {
+        color: #0075AD; }
+    .tabs-secondary > .nav-tabs li.active a[role="tab"] {
+      color: #0075AD;
+      background: none;
+      box-shadow: inset 0 -2px 0 0 #0075AD; }

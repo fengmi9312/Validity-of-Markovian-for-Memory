@@ -1,0 +1,56 @@
+
+
+.distribution_container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    margin: 0;
+}
+
+.distribution_container div {
+    width: 33%;
+    height: 33%;
+    margin: 10%;
+    border: 0;
+}
+
+.estimation_container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    margin: 0;
+}
+
+.estimation_container div {
+    width: 33%;
+    height: 33%;
+    margin: 10%;
+    border: 0;
+}
+
+  .init_frac {
+    width: 10vh; /* Adjust the width as needed */
+    height: 3vh;
+  }
+
+div:not(.range-slider__progress):not(.range-slider) {
+    width: 100%;
+}
+
+.distribution_form {
+    float: left;
+    font-size: 0.5em;
+}
+
+.slider_label {
+    float:left; 
+    font-size: 0.8em;
+}
+
+.main_param {
+    font-size: 1em;
+}
+
+.minor_param{
+    font-size: 0.8em;
+}
