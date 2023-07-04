@@ -21,7 +21,7 @@ The extension modules, experimental codes, figure codes and application package 
 - [Application](#Application)
 
 ## Paper
-The main text as well as the Supplementary Information can be downloaded through <a href = "https://github.com/fengmi9312/Validity-of-Markovian-for-Memory/raw/main/paper_and_SI.pdf">Link</a>. And the main text in arXiv is available at <a href="https://arxiv.org/pdf/2306.16864">arXiv</a>. The latex version can be downloaded via <a href="https://arxiv.org/e-print/2306.16864">source</a>.
+The main text as well as the Supplementary Information can be downloaded through <a href = "https://github.com/fengmi9312/Validity-of-Markovian-for-Memory/raw/main/Maintext-SI.pdf">Link</a>. And the main text in arXiv is available at <a href="https://arxiv.org/pdf/2306.16864">arXiv</a>. The latex version can be downloaded via <a href="https://arxiv.org/e-print/2306.16864">source</a>.
 
 ## Dependencies
 Within the "Dependencies" folder, you'll find the data dependencies and C++ code that generates the module for conducting Monte Carlo simulations of the stratified SIR spreading dynamics model. This module plays a crucial role in the experimental and data generation processes that follow.
