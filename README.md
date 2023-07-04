@@ -27,15 +27,15 @@ The main text as well as the Supplementary Information can be downloaded through
 Within the "Dependencies" folder, you'll find the data dependencies and C++ code that generates the module for conducting Monte Carlo simulations of the stratified SIR spreading dynamics model. This module plays a crucial role in the experimental and data generation processes that follow.
 
 ## Experimental Code
-The "Experimental_Code" folder comprises the Python code responsible for generating all the experimental data presented in this paper.
+The "ExperimentalCode" folder comprises the Python code responsible for generating all the experimental data presented in this paper.
 
 ## Data Code
-The folder titled "Data_Code" contains the Python code that is utilized to generate the figure data based on the experimental data presented in this paper.
+The folder titled "DataCode" contains the Python code that is utilized to generate the figure data based on the experimental data presented in this paper.
 
 ## Figure Code
-Within the "Figure_Code" folder, you will find the Python code responsible for extracting the valid figure data from the experimental data and plotting all the figures showcased in both the main text and supplementary information.
+Within the "FigureCode" folder, you will find the Python code responsible for extracting the valid figure data from the experimental data and plotting all the figures showcased in both the main text and supplementary information.
 #### Figure Data
-Figure data are available at <a href="https://github.com/fengmi9312/Validity-of-Markovian-for-Memory/tree/main/Figure_Data">Figure_Data</a>.
+Figure data are available at <a href="https://github.com/fengmi9312/Validity-of-Markovian-for-Memory/tree/main/FigureData">FigureData</a>.
 
 ## Applications
 we have developed two types of applications, namely a web-based and a Python version, to aid researchers in determining the generation time distribution, estimating the parameters of the Markovian dynamics in transient-state equivalence, and rectifying errors in $R_0$ and steady-state forecasting.
