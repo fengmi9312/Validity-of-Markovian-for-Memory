@@ -30,12 +30,12 @@ function calc_steady_c(_r_0){
     do{
         last_c = current_c;
         current_c = calc_next_c(current_c, _r_0);
-    }while(math.sqrt(math.sum(math.map(math.subtract(current_c, last_c), math.square))) > 0.0001);
+    }while(math.sqrt(math.sum(math.map(math.subtract(current_c, last_c), math.square))) > 0.000001);
     return [current_c, math.multiply(current_c, calc_params[1])]
 }
 
 function calc_real_r0(_r_0){
-    return math.pow(_r_0, 1 / math.pow(t_gen/t_rem, -1.49))
+    return math.pow(_r_0, 1 / math.pow(t_gen / t_rem, -1.54706508))
 }
 
 var file_data = []
