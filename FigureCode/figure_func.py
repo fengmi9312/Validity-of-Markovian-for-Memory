@@ -127,14 +127,14 @@ def figure_theories(_figure_theories_data):
     for i in range(100):
         if i == 99:
             plt.plot(_figure_theories_data[key_name]['time'], _figure_theories_data[key_name]['nm_' + str(i)], 
-                     linewidth = 1, alpha = 0.1, color = 'tab:red', label = 'Memory-dependent')
+                     linewidth = 1, alpha = 0.1, color = 'tab:brown', label = 'Memory-dependent')
             plt.plot(_figure_theories_data[key_name]['time'],  _figure_theories_data[key_name]['m_' + str(i)], 
-                     linewidth = 1, alpha = 0.1, color = 'tab:blue', label = 'Memoryless')
+                     linewidth = 1, alpha = 0.1, color = 'tab:green', label = 'Memoryless')
         else:
             plt.plot(_figure_theories_data[key_name]['time'], _figure_theories_data[key_name]['nm_' + str(i)],
-                     linewidth = 1, alpha = 0.1, color = 'tab:red')
+                     linewidth = 1, alpha = 0.1, color = 'tab:brown')
             plt.plot(_figure_theories_data[key_name]['time'], _figure_theories_data[key_name]['m_' + str(i)], 
-                     linewidth = 1, alpha = 0.1, color = 'tab:blue')
+                     linewidth = 1, alpha = 0.1, color = 'tab:green')
     
     leg = plt.legend(fontsize = 8, loc = 'lower right')    
     for lh in leg.legendHandles: 
@@ -187,10 +187,10 @@ def figure_theories(_figure_theories_data):
             handles, handle_labels = ax.get_legend_handles_labels()
             leg = ax.legend(title_fontsize = 10, handles = handles[:2], labels = handle_labels[:2], fontsize = 8, 
                             bbox_to_anchor=(0.45, 0.5, 1, 0.1), frameon = False, loc = 'lower left')
-            plt.text(0.48, 0.8, 'Markovian:', fontsize = 10, fontweight = 'bold', horizontalalignment='left', verticalalignment='center', transform=ax.transAxes)
+            plt.text(0.48, 0.8, 'non-Markovian:', fontsize = 10, fontweight = 'bold', horizontalalignment='left', verticalalignment='center', transform=ax.transAxes)
             ax.legend(title_fontsize = 10, handles = handles[2:], labels = handle_labels[2:], fontsize = 8, 
                       bbox_to_anchor=(0.45, 0.15, 1, 0.1), frameon = False, loc = 'lower left')
-            plt.text(0.48, 0.45, 'non-Markovian:', fontsize = 10, fontweight = 'bold', horizontalalignment='left', verticalalignment='center', transform=ax.transAxes)
+            plt.text(0.48, 0.45, 'Markovian:', fontsize = 10, fontweight = 'bold', horizontalalignment='left', verticalalignment='center', transform=ax.transAxes)
             ax.add_artist(leg)
     
     ax = _axes[2][4]
@@ -250,7 +250,7 @@ def figure_analysis(_figure_analysis_data):
     labels = [r'$T_{\mathrm{gen}} = T_{\mathrm{rem}}$', r'$T_{\mathrm{gen}} < T_{\mathrm{rem}}$', r'$T_{\mathrm{gen}} > T_{\mathrm{rem}}$']
     markers = ['x', '+', '^']
     for i in [1, 0, 2]:
-        key_name = 'explain_data_simu_' + str(i) + '(subplot_a)'
+        key_name = 'explain_data_simu_' + str(i) + '(subplot_d)'
         for j in range(100):
             if j == 99:
                 plt.plot(_figure_analysis_data[key_name]['time'], _figure_analysis_data[key_name]['curve_' + str(j)], 
@@ -259,12 +259,12 @@ def figure_analysis(_figure_analysis_data):
                 plt.plot(_figure_analysis_data[key_name]['time'], _figure_analysis_data[key_name]['curve_' + str(j)], 
                          linewidth = 1, alpha = 0.1, color = colors[i])
     for i in [1, 0, 2]:
-        key_name = 'explain_data_calc_' + str(i) + '(subplot_a)'
+        key_name = 'explain_data_calc_' + str(i) + '(subplot_d)'
         plt.plot(_figure_analysis_data[key_name]['time'], _figure_analysis_data[key_name]['curve'], 
                  markers[i], fillstyle='none', color = colors_marker[i], markersize = 12,
                  markevery = 360, markeredgewidth = 2, label = 'Fitted(average), ' + labels[i])
-    fitting_c_val = np.array([_figure_analysis_data['fitting_period(subplot_a)']['c_val_'+str(i)].mean() for i in range(i)]).mean()
-    fitting_c_val_init = np.array([ _figure_analysis_data['explain_data_calc_' + str(i) + '(subplot_a)']['curve'][0] for i in range(i)]).mean()
+    fitting_c_val = np.array([_figure_analysis_data['fitting_period(subplot_d)']['c_val_'+str(i)].mean() for i in range(i)]).mean()
+    fitting_c_val_init = np.array([ _figure_analysis_data['explain_data_calc_' + str(i) + '(subplot_d)']['curve'][0] for i in range(i)]).mean()
     ax.axhspan(fitting_c_val_init, fitting_c_val, 
                xmin = 0, xmax = 1, alpha = 0.2, color='tab:gray', linewidth = 0)
     
@@ -285,7 +285,7 @@ def figure_analysis(_figure_analysis_data):
               'gamma_i5r7':r'Gamma, $T_{\mathrm{inf}} = 5$, $T_{\mathrm{rem}} = 7$'}
     for func_type, mean_inf, mean_rem, steady_level in trans_list[:5]:
         func_ir_name = get_func_ir_name(func_type, mean_inf, mean_rem, steady_level)
-        key_name = func_ir_name + '_r0'+'(subplot_b)'
+        key_name = func_ir_name + '_r0'+'(subplot_e)'
         x = _figure_analysis_data[key_name]['log_ratio']
         y = _figure_analysis_data[key_name]['hat_r0']
         z = _figure_analysis_data[key_name]['r0']
@@ -400,26 +400,29 @@ def figure_forecasting(_figure_forecasting_data, _fitting_period_data):
 
     markers = {'exponent':{'weibull_i5r7': '*', 'weibull_i5r5': 'o', 'weibull_i7r7': 's', 'lognormal_i5r7': '^', 'gamma_i5r7': 'D'},
                'weibull':{'weibull_i5r7': '+', 'weibull_i5r5': 'x', 'weibull_i7r7': '1', 'lognormal_i5r7': '2', 'gamma_i5r7': '3'}}
-    colors = {'weibull_i5r7': 'tab:blue', 'weibull_i5r5': 'tab:red', 'weibull_i7r7': 'tab:purple', 'lognormal_i5r7': 'tab:green', 'gamma_i5r7': 'tab:orange'}
+    colors =  {'exponent':{'weibull_i5r7': 'tab:blue', 'weibull_i5r5': 'tab:red', 'weibull_i7r7': 'tab:purple', 
+                           'lognormal_i5r7': 'tab:green', 'gamma_i5r7': 'tab:orange'},
+               'weibull':{'weibull_i5r7': 'darkblue', 'weibull_i5r5': 'darkred', 'weibull_i7r7': 'indigo', 
+                           'lognormal_i5r7': 'darkgreen', 'gamma_i5r7': 'darkgoldenrod'}}
     labels = {'weibull_i5r7': r'Weibull, $T_{\mathrm{inf}} = 5$, $T_{\mathrm{rem}} = 7$', 
               'weibull_i5r5': r'Weibull, $T_{\mathrm{inf}} = 5$, $T_{\mathrm{rem}} = 5$', 
               'weibull_i7r7':r'Weibull, $T_{\mathrm{inf}} = 7$, $T_{\mathrm{rem}} = 7$', 
               'lognormal_i5r7':r'Log-normal, $T_{\mathrm{inf}} = 5$, $T_{\mathrm{rem}} = 7$',
               'gamma_i5r7':r'Gamma, $T_{\mathrm{inf}} = 5$, $T_{\mathrm{rem}} = 7$'}
-    alpha_types = {'exponent': 1, 'weibull': 0.6}
+    alpha_types = {'exponent': 1, 'weibull': 1}
     for fitting_type in ['exponent', 'weibull']:
         for func_type, mean_inf, mean_rem, steady_level in trans_list[:5]:
             func_ir_name = get_func_ir_name(func_type, mean_inf, mean_rem, steady_level)
             key_name = func_ir_name + '_' + curve_names[fitting_type] + '(subplot_f)'
             plt.plot(_figure_forecasting_data[key_name]['log_ratio'], _figure_forecasting_data[key_name]['res'], linestyle = 'None',
-                        marker = markers[fitting_type][func_ir_name], fillstyle = 'none', color = colors[func_ir_name], alpha= alpha_types[fitting_type],
+                        marker = markers[fitting_type][func_ir_name], fillstyle = 'none', color = colors[fitting_type][func_ir_name], alpha= alpha_types[fitting_type],
                         markersize = 6, markeredgewidth = 0.8, label = labels[func_ir_name])
     leg = ax.legend(fontsize = 12, bbox_to_anchor=(0, 1, 1, 0.1), frameon = False, loc = 'lower left', ncol = 2)
     plt.text(0.04, 1.3, 'Markovian:', fontsize = 14, fontweight = 'bold', horizontalalignment='left', verticalalignment='center', transform=ax.transAxes)
     plt.text(0.57, 1.3, 'non-Markovian:', fontsize = 14, fontweight = 'bold', horizontalalignment='left', verticalalignment='center', transform=ax.transAxes)
     for lh in leg.legendHandles: 
         lh.set_markersize(8)
-        lh.set_markeredgewidth(1)
+        lh.set_markeredgewidth(1.5)
         lh.set_alpha(1)
     fmts = {'covid_19': 'D', 'sars': 'o', 'h1n1': 's', 'smallpox': 'v'}
     colors = {'exponent':{'covid_19': 'tab:purple', 'sars': 'dimgray', 'h1n1': 'red', 'smallpox': 'blue'},
@@ -589,26 +592,29 @@ def figure_prevention(_figure_prevention_data, _fitting_period_data):
             ax.add_patch(patches.Rectangle((15 - 0.5, 15 - 0.5), 1, 1, linewidth = 1.5, edgecolor='tab:green', facecolor='none'))
             
         fig.colorbar(im, cax = cbar_axes[type_idx], orientation = 'horizontal')
-
+    
+    
     for type_idx in range(2):
-        ax = axes[4 + type_idx][0]
-        plt.sca(ax)
-         
         markers = {'exponent':{'weibull_i5r7': '*', 'weibull_i5r5': 'o', 'weibull_i7r7': 's', 'lognormal_i5r7': '^', 'gamma_i5r7': 'D'},
                    'weibull':{'weibull_i5r7': '+', 'weibull_i5r5': 'x', 'weibull_i7r7': '1', 'lognormal_i5r7': '2', 'gamma_i5r7': '3'}}
-        colors = {'weibull_i5r7': 'tab:blue', 'weibull_i5r5': 'tab:red', 'weibull_i7r7': 'tab:purple', 'lognormal_i5r7': 'tab:green', 'gamma_i5r7': 'tab:orange'}
+        colors =  {'exponent':{'weibull_i5r7': 'tab:blue', 'weibull_i5r5': 'tab:red', 'weibull_i7r7': 'tab:purple', 
+                               'lognormal_i5r7': 'tab:green', 'gamma_i5r7': 'tab:orange'},
+                   'weibull':{'weibull_i5r7': 'darkblue', 'weibull_i5r5': 'darkred', 'weibull_i7r7': 'indigo', 
+                               'lognormal_i5r7': 'darkgreen', 'gamma_i5r7': 'darkgoldenrod'}}
         labels = {'weibull_i5r7': r'Weibull, $T_{\mathrm{inf}} = 5$, $T_{\mathrm{rem}} = 7$', 
                   'weibull_i5r5': r'Weibull, $T_{\mathrm{inf}} = 5$, $T_{\mathrm{rem}} = 5$', 
                   'weibull_i7r7':r'Weibull, $T_{\mathrm{inf}} = 7$, $T_{\mathrm{rem}} = 7$', 
                   'lognormal_i5r7':r'Log-normal, $T_{\mathrm{inf}} = 5$, $T_{\mathrm{rem}} = 7$',
                   'gamma_i5r7':r'Gamma, $T_{\mathrm{inf}} = 5$, $T_{\mathrm{rem}} = 7$'}
-        alpha_types = {'exponent': 1, 'weibull': 0.6}
+        alpha_types = {'exponent': 1, 'weibull': 1}
+        ax = axes[4 + type_idx][0]
+        plt.sca(ax)
         for fitting_type in ['exponent', 'weibull']:
             for func_type, mean_inf, mean_rem, steady_level in trans_list[:5]:
                 func_ir_name = get_func_ir_name(func_type, mean_inf, mean_rem, steady_level)
                 key_name = func_ir_name + '_' + fitting_type + '(subplot_'+string.ascii_lowercase[8 + type_idx]+')'
                 plt.plot(_figure_prevention_data[key_name]['log_ratio'], _figure_prevention_data[key_name]['res'], linestyle = 'None',
-                            marker = markers[fitting_type][func_ir_name], fillstyle = 'none', color = colors[func_ir_name], alpha= alpha_types[fitting_type],
+                            marker = markers[fitting_type][func_ir_name], fillstyle = 'none', color = colors[fitting_type][func_ir_name], alpha= alpha_types[fitting_type],
                             markersize = 6, markeredgewidth = 0.8, label = labels[func_ir_name])
         if type_idx == 0:
             plt.text(0.04, 1.5, 'Markovian:', fontsize = 12, fontweight = 'bold', horizontalalignment='left', verticalalignment='center', transform=ax.transAxes)
@@ -668,7 +674,7 @@ def figure_prevention(_figure_prevention_data, _fitting_period_data):
             plt.text(0.38, 0.92, r'(ii). $T_{\mathrm{gen}} > T_{\mathrm{rem}}$', 
                      color = 'tab:orange', weight = 'bold', transform = ax.transAxes)
 
-    titles = [[None, None, None],[None], ['Markovain', 'non-Markovian'], ['Markovain', 'non-Markovian'], [None], [None]]
+    titles = [[None, None, None],[None], ['Markovian', 'non-Markovian'], ['Markovian', 'non-Markovian'], [None], [None]]
     idx_titles = [['a', 'b', 'c'], ['d'], ['e', 'f'], ['g', 'h'], [None], [None]]
     xlabels = [[None, None, 'Time(d)'], [None], [None, r'$\ln{\alpha_{inf}}$'], [None, r'$\ln{\alpha_{inf}}$'], [None], [r'$\ln{\eta}$']]
     ylabels = [[None, 'Fraction(%)', None], ['Fraction(%)'], [r'$\ln{\alpha_{rem}}$', r'$\ln{\alpha_{rem}}$'], 
@@ -747,7 +753,7 @@ def si_figure_percentile(_si_figure_percentile_data):
             for lh in leg.legendHandles: 
                 lh.set_markersize(6)
     
-    titles = [['10 pencentile','90 percentile'], [r'50 percentile with different $\tilde{c}$', r'5 percentile with different $\tilde{c}$']]        
+    titles = [['10 percentile','90 percentile'], [r'50 percentile with different $\tilde{c}$', r'5 percentile with different $\tilde{c}$']]        
     idx_titles = [['a', 'b'], ['c', 'd']]
     xlabels = [[r'$\ln{\eta}$', r'$\ln{\eta}$'], [r'$\ln{\eta}$', r'$\ln{\eta}$']]
     ylabels = [[r'$\varepsilon$', r'$\varepsilon$'], [r'$\varepsilon$', r'$\varepsilon$']]
@@ -810,7 +816,7 @@ def si_figure_error_percentile(_si_figure_error_percentile_data):
                 plt.plot(_si_figure_error_percentile_data[key_name]['percentile'], _si_figure_error_percentile_data[key_name][j], color = colors[func_type], linewidth = 0.5)
     titles = [['Weibull','Log-normal', 'Gamma'], ]       
     idx_titles = [['a', 'b', 'c']]
-    xlabels = [['Percentile', 'Percentile', 'Percentile']]
+    xlabels = [[r'Percentile $\theta$', r'Percentile $\theta$', r'Percentile $\theta$']]
     ylabels = [[r'$\varepsilon$', r'$\varepsilon$', r'$\varepsilon$']]
     xtick_amounts = [[5, 5, 5]]
     ytick_amounts = [[5, 5, 5]]
