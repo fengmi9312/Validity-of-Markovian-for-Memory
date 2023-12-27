@@ -145,14 +145,18 @@ trans_list = [['weibull', 5, 7, 6],
               ['weibull', 5, 7, 8],]
 
 if __name__ == '__main__':
+    rank = 0
+    '''
+    import pandas as pd
     from mpi4py import MPI
     comm = MPI.COMM_WORLD
-    size = comm.Get_size()
+    t_num = comm.Get_size()
     rank = comm.Get_rank()
+    '''          # These five lines of code ensure that the code runs on the server utilizing Slurm to allocate computational resources to each calculation.
     func_type, mean_inf, mean_rem, steady_level = trans_list[rank]
     steady_prdt = steady_level / 10
     
-    writer = pd.ExcelWriter("trans_equivalence_data/"+ func_type + "_" + str(mean_inf) + "_" + str(mean_rem) + "_" + str(steady_level) + ".xlsx")
+    writer = pd.ExcelWriter("../ExperimentalDataTmp/trans_equivalence_data/"+ func_type + "_" + str(mean_inf) + "_" + str(mean_rem) + "_" + str(steady_level) + ".xlsx")
     for i in param_range[func_type]:
         for j in param_range[func_type]:
             #print(i, j)

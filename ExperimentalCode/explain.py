@@ -85,8 +85,8 @@ from mpi4py import MPI
 comm = MPI.COMM_WORLD
 size = comm.Get_size()
 rank = comm.Get_rank()
-writer = pd.ExcelWriter("explain_datax/data_"+ str(rank) + ".xlsx")
-writer_add = pd.ExcelWriter("explain_datax/data_curves_"+ str(rank) + ".xlsx")
+writer = pd.ExcelWriter("../ExperimentalDataTmp/explain_data/data_"+ str(rank) + ".xlsx")
+writer_add = pd.ExcelWriter("../ExperimentalDataTmp/explain_data/data_curves_"+ str(rank) + ".xlsx")
 param_list = {}
 res_list = {}
 rem_res_list = {}
@@ -119,52 +119,5 @@ pd.DataFrame(res_list).to_excel(writer, sheet_name = 'res')
 pd.DataFrame(rem_res_list).to_excel(writer, sheet_name = 'rem_res')
 writer.close()
 writer_add.close()
-
-
-
-
-
-
-
-'''
-
-
-if rank == 0:
-    simu_curve_data_n = []
-    writer_simu_nm = []
-    for idx, alpha_inf_n in enumerate((2.5, 1.5, 3.5)):
-        writer_simu_nm.append(pd.ExcelWriter("explain_datax/simu_data"+str(idx)+".xlsx"))
-        if idx == 0:
-            beta_inf_n = beta_inf
-        else:
-            beta_inf_n = get_beta_inf(alpha_inf_n, alpha_rem, beta_rem, lambda_eff)
-        simu_curve_data_n.append([])
-        for i in range(simu_times):
-            print(i)
-            simu_curve_data_n[-1].append({'s': [], 'i': [], 'r': [], 'c': [], 'd': [], 'y': []})
-            simu_once = ms.simu(**simu_structure_params)
-            simu_once.set_generator_seed(i + 1)
-            simu_once.set_spreading_func('weibull', 'weibull')
-            simu_once.set_total_spreading_params([alpha_inf_n, beta_inf_n],
-                                                 [alpha_rem, beta_rem])
-            simu_once.set_amount_seeds(amount_seeds)
-            for data_key in simu_curve_data_n[-1][-1].keys():
-                simu_curve_data_n[-1][-1][data_key].append(simu_once.get_x_amount(data_key) / simu_once.get_node_amount())
-            while simu_once.get_i_amount() > 0:
-                simu_once.spread_once()
-                for data_key in simu_curve_data_n[-1][-1].keys():
-                    simu_curve_data_n[-1][-1][data_key].append(simu_once.get_x_amount(data_key) / simu_once.get_node_amount())
-            del simu_once
-    for idx in range(3):
-        for i in range(simu_times): 
-            pd.DataFrame(simu_curve_data_n[idx][i]).to_excel(writer_simu_nm[idx], sheet_name = 'data_' + str(i)) 
-        writer_simu_nm[idx].close()
-else:
-    pass
-
-'''
-
-
-
 
 

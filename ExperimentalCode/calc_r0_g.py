@@ -172,7 +172,7 @@ for i in param_range[func_type]:
         idx += 1
         
 import pandas as pd   
-writer = pd.ExcelWriter("./r0_g_data/r0_g_calc_"+ key + ".xlsx")     
+writer = pd.ExcelWriter("../ExperimentalDataTmp/r0_g_data/r0_g_calc_"+ key + ".xlsx")     
 pd.DataFrame(r0_g_data).to_excel(writer, sheet_name = 'r0_g')
 writer.close()
 print("calc_selected: " + str(calc_selected))
