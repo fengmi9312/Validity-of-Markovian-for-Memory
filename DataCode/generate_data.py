@@ -4,6 +4,9 @@ Created on Fri Apr 14 15:18:13 2023
 
 @author: admin
 """
+import sys
+sys.path.append('../Dependencies/CodeDependencies')
+sys.path.append('../Dependencies/ModuleDependencies(Windows)')
 
 import numpy as np
 from disease_survivals import get_all_meantime, covid_19, sars, h1n1, smallpox
@@ -16,7 +19,6 @@ from copy import deepcopy
 from model_n import calc_general_k, calc_k, sir_model
 import data_import as di
 import metapopulation_simulation as ms
-from scipy.stats import spearmanr
 
 
 day_div = 24
@@ -135,6 +137,8 @@ trans_list = [['weibull', 5, 7, 6],
               ['weibull', 7, 7, 6],
               ['lognormal', 5, 7, 6],
               ['gamma', 5, 7, 6],
+              ['weibull', 7, 5, 6],
+              ['weibull', 6, 6, 6],
               ['weibull', 5, 7, 4],
               ['weibull', 5, 7, 8],]
 param_range = {'weibull': np.arange(-6, 25, 1), 'gamma': np.arange(-6, 25, 1), 'lognormal': np.arange(6, 37, 1)}
@@ -143,10 +147,53 @@ srv_funcs = {'weibull': func.srv_weibull_scale, 'gamma': func.srv_gamma_scale, '
 get_mean = {'weibull': get_mean_from_weibull, 'gamma': get_mean_from_gamma, 'lognormal': get_mean_from_lognormal}
 get_beta = {'weibull': get_beta_from_weibull, 'gamma': get_beta_from_gamma, 'lognormal': get_beta_from_lognormal}
 
+def get_log_ratios(_transient_data):
+    log_ratios = {}
+    for func_type, mean_inf, mean_rem, steady_level in trans_list[:5]:
+        func_ir_name = get_func_ir_name(func_type, mean_inf, mean_rem, steady_level)
+        log_ratios[func_ir_name]= np.log(_transient_data[func_ir_name]['result']['ratio'].to_numpy())
+    return log_ratios
+
+def get_log_ratios_addition():
+    log_ratios = {}
+    for func_type, mean_inf, mean_rem, steady_level in trans_list[5:7]:
+        func_ir_name = get_func_ir_name(func_type, mean_inf, mean_rem, steady_level)
+        res = []
+        for i in param_range[func_type]:
+            for j in param_range[func_type]:
+                #print(i, j)
+                if func_type == 'lognormal':
+                    alpha_inf = i * 0.05
+                    alpha_rem = j * 0.05
+                else:
+                    alpha_inf = np.exp(i * 0.05)
+                    alpha_rem = np.exp(j * 0.05)
+                beta_inf = get_beta[func_type](alpha_inf, mean_inf)
+                beta_rem = get_beta[func_type](alpha_rem, mean_rem)
+                vgnr_inf = gnr(srv_funcs[func_type], 'func', [alpha_inf, beta_inf])
+                vgnr_rem = gnr(srv_funcs[func_type], 'func', [alpha_rem, beta_rem])
+                if func_type == 'lognormal':
+                    alpha_inf, alpha_rem = i * 0.05, j * 0.05
+                else:
+                    alpha_inf = np.exp(i * 0.05)
+                    alpha_rem = np.exp(j * 0.05)
+                beta_inf = get_beta[func_type](alpha_inf, mean_inf)
+                beta_rem = get_beta[func_type](alpha_rem, mean_rem)
+                if func_type == 'weibull':
+                    res.append(get_mean_from_cum(alpha_inf, beta_inf, alpha_rem, beta_rem) / get_mean_from_weibull(alpha_rem, beta_rem))
+                else:
+                    vgnr_inf = gnr(srv_funcs[func_type], 'func', [alpha_inf, beta_inf])
+                    vgnr_rem = gnr(srv_funcs[func_type], 'func', [alpha_rem, beta_rem])
+                    occur_inf = occur(vgnr_inf, vgnr_type = 'srv', length = occur_length - 1, step = calc_params['step'])
+                    occur_rem = occur(vgnr_rem, vgnr_type = 'srv', length = occur_length - 1, step = calc_params['step'])
+                    res.append(calc_generation_time(occur_inf, occur_rem)/calc_mean_time(occur_rem)) 
+        log_ratios[func_ir_name] = np.log(res)
+    return log_ratios
+
 
 def get_ks():
     ks = {}
-    for func_type, mean_inf, mean_rem, steady_level in trans_list[:5]:
+    for func_type, mean_inf, mean_rem, steady_level in trans_list:
         func_ir_name = func_type + '_i' + str(mean_inf) + 'r' + str(mean_rem)
         ks[func_ir_name] = []
         for i in param_range[func_type]:
@@ -212,7 +259,7 @@ def generate_figure_theories_data(_simu_data, _calc_data, _simu_data_m, _simu_da
         _figure_theories_data[key_name]['m_' + str(i)] = arr_extent(_simu_data_m['data_' + str(i)]['r'].to_numpy(), max_len)
     
     # generate data of subplot e
-    eig_max = 2.3135629562408058
+    eig_max = 2.3131550279038704
     key_name = 'r_steady_state(subplot_e)'
     _figure_theories_data[key_name] = {'r0': np.linspace(0.01, 2, 40) * eig_max}
     _steady_res_nm = []
@@ -333,7 +380,7 @@ def generate_si_figure_percentile_data(_transient_data):
        
     #generate data of suplots c--d
     for idx, percentile in enumerate([50, 5]):
-        for i in [0, 5, 6]:
+        for i in [0, 7, 8]:
             func_type, mean_inf, mean_rem, steady_level = trans_list[i]
             func_ir_name = get_func_ir_name(func_type, mean_inf, mean_rem, steady_level)
             ratio_list= _transient_data[func_ir_name]['result']['ratio'].to_numpy()
@@ -442,26 +489,34 @@ def generate_figure_analysis_data(_explain_data, _forecasting_data, _r0_g_data, 
             _figure_analysis_data['fitting_period(subplot_a)']['fitting_period_'+str(i)].append(t_fitting)
             _figure_analysis_data['fitting_period(subplot_a)']['c_val_'+str(i)].append(_c_val)
             _figure_analysis_data[key_name]['curve_' + str(j)] = arr_extent(simu_curve_data[i][j], simu_len)
+        _figure_analysis_data['fitting_period(subplot_a)']['fitting_period_'+str(i)]=np.array(_figure_analysis_data['fitting_period(subplot_a)']['fitting_period_'+str(i)])
+        _figure_analysis_data['fitting_period(subplot_a)']['c_val_'+str(i)]=np.array(_figure_analysis_data['fitting_period(subplot_a)']['c_val_'+str(i)])
         key_name = 'explain_data_calc_' + str(i) + '(subplot_a)'
         calc_len = max([len(calc_curve_data[i][j]) for j in range(100)])
         _figure_analysis_data[key_name] = {'time': np.arange(calc_len) * step}
         _figure_analysis_data[key_name]['curve'] = np.array([arr_extent(calc_curve_data[i][j], calc_len) for j in range(100)]).mean(axis = 0)
     
     fitted_x, fitted_y = [], []
-    for func_type, mean_inf, mean_rem, steady_level in trans_list[:5]:
+    for func_type, mean_inf, mean_rem, steady_level in trans_list[:7]:
         idx = 0
         func_ir_name = get_func_ir_name(func_type, mean_inf, mean_rem, steady_level)
-        key_name = func_ir_name + '_r0'+'(subplot_b)'
-        _figure_analysis_data[key_name] = {'log_ratio': _log_ratios[func_ir_name], 'hat_r0': [], 'r0': _r0_g_data[func_ir_name]['r0_g']['r0'].to_numpy()}
+        if func_type != 'weibull':
+            key_name = func_ir_name + '_r0'+'(si_subplot_a)'
+        else:
+            key_name = func_ir_name + '_r0'+'(subplot_b)'
+        _figure_analysis_data[key_name] = {'log_ratio': [], 'hat_r0': [], 'r0': []}
         for i in param_range[func_type]:
             for j in param_range[func_type]:
                 r = _ks[func_ir_name][idx] * 3.9707627520110265
                 exp_inf = _forecasting_data[func_ir_name]['data_' + str(i) + '_' + str(j)]['params']['exponent_inf'].to_numpy()[:100]
                 exp_rem = _forecasting_data[func_ir_name]['data_' + str(i) + '_' + str(j)]['params']['exponent_rem'].to_numpy()[:100]
                 lambda_fitting = (exp_inf / exp_rem).mean()
-                _figure_analysis_data[key_name]['hat_r0'].append(r * lambda_fitting)
-                fitted_x.append(_log_ratios[func_ir_name][idx])
-                fitted_y.append(- np.log(np.log(_figure_analysis_data[key_name]['hat_r0'][-1]) / np.log(_figure_analysis_data[key_name]['r0'][-1])))
+                if r * lambda_fitting > 1:
+                    _figure_analysis_data[key_name]['log_ratio'].append(_log_ratios[func_ir_name][idx])
+                    _figure_analysis_data[key_name]['hat_r0'].append(r * lambda_fitting)
+                    _figure_analysis_data[key_name]['r0'].append(_r0_g_data[func_ir_name]['r0_g']['r0'].to_numpy()[idx])
+                    fitted_x.append(_log_ratios[func_ir_name][idx])
+                    fitted_y.append(- np.log(np.log(_figure_analysis_data[key_name]['hat_r0'][-1]) / np.log(_figure_analysis_data[key_name]['r0'][-1])))
                 idx += 1
                 
         
@@ -662,7 +717,7 @@ def generate_figure_prevention_data(_vac_curve_data, _vac_data, _real_vac_fittin
     
     return _figure_prevention_data
    
-def generate_figure_prevention_opt_data(_vac_curve_data, _vac_data, _real_vac_fitting_data, _log_ratios):
+def generate_figure_prevention_opt_data(_vac_data, _real_vac_fitting_data, _log_ratios):
     _figure_prevention_opt_data = {}
     curve_names = {'simu': 'simulation', 'weibull': 'non-Markovian', 'exponent': 'Markovian'}
     ages = ['under_20', '20-49', '20+', '60+', 'all_ages']
@@ -707,3 +762,276 @@ def generate_figure_prevention_opt_data(_vac_curve_data, _vac_data, _real_vac_fi
                         _figure_prevention_opt_data[key_name]['res'].append(_res / 100)
     return _figure_prevention_opt_data    
    
+def generate_figure_prevention_data_revision(_vac_curve_data, _vac_data,
+                                             _vac_curve_data_revision, _vac_data_revision, _real_vac_fitting_data_revision,
+                                             _log_ratios):
+    _figure_prevention_data = {}
+    curve_names = {'simu': 'simulation', 'weibull': 'non-Markovian', 'exponent': 'Markovian'}
+    ages = ['under_20', '20-49', '20+', '60+', 'all_ages']
+    target = 'c'
+    file_mark = '9_9'
+    key_name = 'simulation_curves(subplot_a)'
+    _figure_prevention_data[key_name] = {}
+    for i, age in enumerate(['no_vaccine'] + ages):
+        min_len = min([len(_vac_curve_data_revision[file_mark]['simu_curve_' + age + '_' + str(j)][target]) for j in range(100)])
+        _figure_prevention_data[key_name]['time'] = np.arange(min_len) * step
+        _figure_prevention_data[key_name][age] = \
+        np.array([_vac_curve_data_revision[file_mark]['simu_curve_' + age + '_' + str(j)][target].to_numpy()[:min_len] for j in range(100)]).mean(axis = 0)
+        _figure_prevention_data[key_name][age + '_std'] = \
+        np.array([_vac_curve_data_revision[file_mark]['simu_curve_' + age + '_' + str(j)][target].to_numpy()[:min_len] for j in range(100)]).std(axis = 0)
+    for idx, fitting_type in enumerate(['exponent', 'weibull']):
+        key_name = curve_names[fitting_type] + '_curves(subplot_'+string.ascii_lowercase[idx + 1]+')' 
+        _figure_prevention_data[key_name] = {'time': np.arange(min_len) * step}
+        for i, age in enumerate(['no_vaccine'] + ages):
+            min_len = min([len(_vac_curve_data[file_mark]['calc_curve_' + age + '_' + str(j)][fitting_type + '_' + target]) for j in range(100)])
+            _figure_prevention_data[key_name][age] = \
+            np.array([_vac_curve_data[file_mark]['calc_curve_' + age + '_' + str(j)][fitting_type + '_' + target].to_numpy()[:min_len] for j in range(100)]).mean(axis = 0)
+            _figure_prevention_data[key_name][age + '_std'] = \
+            np.array([_vac_curve_data[file_mark]['calc_curve_' + age + '_' + str(j)][fitting_type + '_' + target].to_numpy()[:min_len] for j in range(100)]).std(axis = 0)
+    
+    real_survivals = {'covid_19': covid_19, 'sars': sars, 'h1n1': h1n1, 'smallpox': smallpox}
+    key_name = 'real_fitting(subplot_i)'
+    key_name1 = 'real_fitting(subplot_j)'
+    _figure_prevention_data[key_name] = {}
+    _figure_prevention_data[key_name1] = {}
+    for fitting_type in ['exponent', 'weibull']:
+        for disease in ['covid_19', 'sars', 'h1n1', 'smallpox']: 
+            x = get_all_meantime(real_survivals[disease](4000, 1 / 24), 1/ 24) 
+            log_ratio = np.log(x[2] / x[1])
+            _res = []
+            _opt_res = []
+            for m in range(100):
+                res_simu = []
+                res_calc = []
+                _res_once = 0
+                _res_tot = 0
+                for age in ['no_vaccine'] + ages:
+                    if age != 'no_vaccine':
+                        res_simu.append(_real_vac_fitting_data_revision[disease]['simu_data_' + age][target][m])
+                        res_calc.append(_real_vac_fitting_data_revision[disease]['calc_data_' + age][fitting_type + '_' + target][m])
+                    _x_simu = _real_vac_fitting_data_revision[disease]['simu_data_' + age][target][m]
+                    _x_target = _real_vac_fitting_data_revision[disease]['calc_data_' + age][fitting_type + '_' + target][m]
+                    _res_once += (_x_simu - _x_target) ** 2
+                    _res_tot += _x_simu ** 2
+                _res.append((_res_once ** 0.5) / (_res_tot ** 0.5))
+                if np.argmin(res_simu) == np.argmin(res_calc):
+                    _opt_res.append(0)
+                else:
+                    _opt_res.append(1)
+            _figure_prevention_data[key_name][disease + '_' + curve_names[fitting_type]] = [log_ratio, np.array(_res).mean(), np.array(_res).std()]
+            _figure_prevention_data[key_name1][disease + '_' + curve_names[fitting_type]] = [log_ratio, np.array(_opt_res).mean()]
+    
+    
+    for func_type, mean_inf, mean_rem, steady_level in trans_list[:5]:
+        for idx, fitting_type in enumerate(['exponent', 'weibull']):
+            func_ir_name = get_func_ir_name(func_type, mean_inf, mean_rem, steady_level)
+            key_name = func_ir_name + '_' + fitting_type + '(subplot_i)'
+            key_name1 = func_ir_name + '_' + fitting_type + '(subplot_j)'
+            _figure_prevention_data[key_name] = {'log_ratio': _log_ratios[func_ir_name], 'res': []}
+            _figure_prevention_data[key_name1] = {'log_ratio': _log_ratios[func_ir_name], 'res': []}
+            if func_ir_name == 'weibull_i5r7':
+                key_name_grid = 'grid_' + curve_names[fitting_type] +'(subplot_'+string.ascii_lowercase[idx + 4]+')'
+                key_name_grid1 = 'grid_' + curve_names[fitting_type] +'(subplot_'+string.ascii_lowercase[idx + 6]+')'
+                _figure_prevention_data[key_name_grid] = {}
+                _figure_prevention_data[key_name_grid1] = {}
+            for i, inf_pow in enumerate(param_range[func_type]):
+                if func_ir_name == 'weibull_i5r7':
+                    _figure_prevention_data[key_name_grid]['inf_' + str(inf_pow)] = []
+                    _figure_prevention_data[key_name_grid1]['inf_' + str(inf_pow)] = []
+                for j, rem_pow in enumerate(param_range[func_type]):
+                    _data_one = _vac_data[func_ir_name]['data_'+str(inf_pow)+'_'+str(rem_pow)]
+                    _data_one_revision = _vac_data_revision[func_ir_name]['data_'+str(inf_pow)+'_'+str(rem_pow)]
+                    _res = 0
+                    _opt_res = 0
+                    for m in range(100):
+                        res_simu = []
+                        res_calc = []
+                        _res_once = 0
+                        _res_tot = 0
+                        for age in ['no_vaccine'] + ages:
+                            if age != 'no_vaccine':
+                                res_simu.append(_data_one_revision['simu_data_' + age][target][m])
+                                res_calc.append(_data_one['calc_data_' + age][fitting_type + '_' + target][m])
+                            _x_simu = _data_one_revision['simu_data_' + age][target][m]
+                            _x_target = _data_one['calc_data_' + age][fitting_type + '_' + target][m]
+                            _res_once += (_x_simu - _x_target) ** 2
+                            _res_tot += _x_simu ** 2
+                        _res += (_res_once ** 0.5) / (_res_tot ** 0.5)
+                        if np.argmin(res_simu) == np.argmin(res_calc):
+                            _opt_res += 0
+                        else:
+                            _opt_res += 1
+                    _figure_prevention_data[key_name]['res'].append(_res / 100)
+                    _figure_prevention_data[key_name1]['res'].append(_opt_res / 100)
+                    if func_ir_name == 'weibull_i5r7':
+                        _figure_prevention_data[key_name_grid]['inf_' + str(inf_pow)].append(_res / 100)
+                        _figure_prevention_data[key_name_grid1]['inf_' + str(inf_pow)].append(_opt_res / 100)
+                        
+        key_name = 'vac_eff(subplot_d)'
+        _figure_prevention_data[key_name] = {}
+        _data_one = _vac_data['weibull_i5r7']['data_24_24']
+        _data_one_revsion = _vac_data_revision['weibull_i5r7']['data_24_24']
+        _figure_prevention_data[key_name]['simulation'] = \
+            np.array([[_data_one_revsion['simu_data_' + age][target][m] for age in (['no_vaccine'] + ages)] for m in range(100)]).mean(axis = 0)
+        _figure_prevention_data[key_name]['simulation_std'] = \
+            np.array([[_data_one_revsion['simu_data_' + age][target][m] for age in (['no_vaccine'] + ages)] for m in range(100)]).std(axis = 0)
+        _figure_prevention_data[key_name]['Markovian'] = \
+            np.array([[_data_one['calc_data_' + age]['exponent_' + target][m] for age in (['no_vaccine'] + ages)] for m in range(100)]).mean(axis = 0)
+        _figure_prevention_data[key_name]['Markovian_std'] = \
+            np.array([[_data_one['calc_data_' + age]['exponent_' + target][m] for age in (['no_vaccine'] + ages)] for m in range(100)]).std(axis = 0)
+        _figure_prevention_data[key_name]['non-Markovian'] = \
+            np.array([[_data_one['calc_data_' + age]['weibull_' + target][m] for age in (['no_vaccine'] + ages)] for m in range(100)]).mean(axis = 0)
+        _figure_prevention_data[key_name]['non-Markovian_std'] = \
+            np.array([[_data_one['calc_data_' + age]['weibull_' + target][m] for age in (['no_vaccine'] + ages)] for m in range(100)]).std(axis = 0)
+    
+    return _figure_prevention_data
+   
+def generate_figure_prevention_opt_data_revision(_vac_data, _vac_data_revision, _real_vac_fitting_data_revision,
+                                                 _log_ratios):
+    _figure_prevention_opt_data = {}
+    curve_names = {'simu': 'simulation', 'weibull': 'non-Markovian', 'exponent': 'Markovian'}
+    ages = ['under_20', '20-49', '20+', '60+', 'all_ages']
+    target = 'c'
+    real_survivals = {'covid_19': covid_19, 'sars': sars, 'h1n1': h1n1, 'smallpox': smallpox}
+    for age_idx in range(5):
+        key_name = 'real_fitting(subplot_'+string.ascii_lowercase[age_idx]+')'
+        _figure_prevention_opt_data[key_name] = {}
+        for fitting_type in ['exponent', 'weibull']:
+            for disease in ['covid_19', 'sars', 'h1n1', 'smallpox']: 
+                x = get_all_meantime(real_survivals[disease](4000, 1 / 24), 1/ 24) 
+                log_ratio = np.log(x[2] / x[1])
+                _res = 0
+                for m in range(100):
+                    _res_simu = []
+                    _res_calc = []
+                    for age in ages:
+                        if ages[age_idx] != age:
+                            _res_simu.append(_real_vac_fitting_data_revision[disease]['simu_data_' + age][target][m])
+                            _res_calc.append(_real_vac_fitting_data_revision[disease]['calc_data_' + age][fitting_type + '_' + target][m])
+                    if np.argmin(_res_simu) != np.argmin(_res_calc):
+                        _res += 1
+                _figure_prevention_opt_data[key_name][disease + '_' + curve_names[fitting_type]] = [log_ratio, _res / 100]
+        for func_type, mean_inf, mean_rem, steady_level in trans_list[:5]:
+            for idx, fitting_type in enumerate(['exponent', 'weibull']):
+                func_ir_name = get_func_ir_name(func_type, mean_inf, mean_rem, steady_level)
+                key_name = func_ir_name + '_' + fitting_type + '(subplot_'+string.ascii_lowercase[age_idx]+')'
+                _figure_prevention_opt_data[key_name] = {'log_ratio': _log_ratios[func_ir_name], 'res': []}
+                for i, inf_pow in enumerate(param_range[func_type]):
+                    for j, rem_pow in enumerate(param_range[func_type]):
+                        _data_one = _vac_data[func_ir_name]['data_'+str(inf_pow)+'_'+str(rem_pow)]
+                        _data_one_revision = _vac_data_revision[func_ir_name]['data_'+str(inf_pow)+'_'+str(rem_pow)]
+                        _res = 0
+                        for m in range(100):
+                            _res_simu = []
+                            _res_calc = []
+                            for age in ages:
+                                if ages[age_idx] != age:
+                                    _res_simu.append(_data_one_revision['simu_data_' + age][target][m])
+                                    _res_calc.append(_data_one['calc_data_' + age][fitting_type + '_' + target][m])
+                            if np.argmin(_res_simu) != np.argmin(_res_calc):
+                                _res += 1
+                        _figure_prevention_opt_data[key_name]['res'].append(_res / 100)
+    return _figure_prevention_opt_data    
+
+def generate_si_figure_sensitivity():
+    from scipy.special import gamma, digamma
+
+    def _calc_eta(_alpha_inf, _alpha_rem):
+        return gamma((1 + _alpha_inf) / _alpha_rem) / (gamma(_alpha_inf / _alpha_rem) * gamma(1 + 1 / _alpha_rem))
+
+    def _gamma_prime(x):
+        return digamma(x) * gamma(x)
+
+    def _gamma_prime_y(x, step = 0.001):
+        return (gamma(x + step) - gamma(x)) / step
+
+    def _derivative_func(_alpha_inf, _alpha_rem, _beta_inf = 1, _beta_rem = 1, lambda_max = 1):
+        p = _alpha_inf / _alpha_rem + 1
+        q = _beta_rem / _beta_inf
+        gamma_val = gamma(p)
+        gamma_prime_val = _gamma_prime(p)
+        return [lambda_max * (q ** _alpha_inf) * gamma_prime_val / _alpha_rem + lambda_max * gamma_val * (q ** _alpha_inf) * np.log(q),
+                - lambda_max * gamma_val * (q ** _alpha_inf) / _beta_inf,
+                - lambda_max * (q ** _alpha_inf)* gamma_prime_val / (_alpha_rem ** 2),
+                  lambda_max * gamma_val * (q ** _alpha_inf) / _beta_rem]
+
+    alpha_inf = 3
+    mean_inf = 5
+    beta_inf = get_beta_from_weibull(alpha_inf, mean_inf)
+    alpha_rem = 2
+    mean_rem = 7
+    beta_rem = get_beta_from_weibull(alpha_rem, mean_rem)
+
+    eta = []
+    prime_alpha_inf = []
+    prime_beta_inf = []
+    prime_alpha_rem = []
+    prime_beta_rem = []
+
+
+    for inf_pow in np.arange(-6, 25):
+        eta.append([])
+        prime_alpha_inf.append([])
+        prime_beta_inf.append([])
+        prime_alpha_rem.append([])
+        prime_beta_rem.append([])
+        for rem_pow in np.arange(-6, 25):
+            alpha_inf = np.e ** (inf_pow * 0.05)
+            alpha_rem = np.e ** (rem_pow * 0.05)
+            beta_inf = get_beta_from_weibull(alpha_inf, mean_inf)
+            beta_rem = get_beta_from_weibull(alpha_rem, mean_rem)
+            eta[-1].append(_calc_eta(alpha_inf, alpha_rem))
+            primes = _derivative_func(alpha_inf, alpha_rem, beta_inf, beta_rem)
+            prime_alpha_inf[-1].append(primes[0])
+            prime_beta_inf[-1].append(primes[1])
+            prime_alpha_rem[-1].append(primes[2])
+            prime_beta_rem[-1].append(primes[3])
+            
+    eta = np.array(eta)
+    prime_alpha_inf = np.array(prime_alpha_inf)
+    prime_beta_inf = np.array(prime_beta_inf)
+    prime_alpha_rem = np.array(prime_alpha_rem)
+    prime_beta_rem = np.array(prime_beta_rem)
+    _si_figure_sensitivity_data = {'prime_alpha_inf(subplot_b)': {'eta': eta.reshape(31 * 31), 'prime_alpha_inf': prime_alpha_inf.reshape(31 * 31)}, 
+                                   'prime_beta_inf(subplot_c)': {'eta': eta.reshape(31 * 31), 'prime_beta_inf': prime_beta_inf.reshape(31 * 31)},
+                                   'prime_alpha_rem(subplot_d)': {'eta': eta.reshape(31 * 31), 'prime_alpha_rem': prime_alpha_rem.reshape(31 * 31)},
+                                   'prime_beta_rem(subplot_e)': {'eta': eta.reshape(31 * 31), 'prime_beta_rem': prime_beta_rem.reshape(31 * 31)}}
+                                   
+    eta_rows, prime_alpha_inf_rows, prime_beta_inf_rows, prime_alpha_rem_rows, prime_beta_rem_rows = {}, {}, {}, {}, {} 
+    for idx, inf_pow in enumerate(np.arange(-6, 25)):
+        _row_name = 'inf_pow_' + str(inf_pow)
+        eta_rows[_row_name] = eta[idx]
+        prime_alpha_inf_rows[_row_name] = prime_alpha_inf[idx]
+        prime_beta_inf_rows[_row_name] = prime_beta_inf[idx]
+        prime_alpha_rem_rows[_row_name] = prime_alpha_rem[idx]
+        prime_beta_rem_rows[_row_name] = prime_beta_rem[idx]
+    
+    _si_figure_sensitivity_data.update({'eta(subplot_a)': eta_rows, 
+                                        'prime_alpha_inf_inset(subplot_b)': prime_alpha_inf_rows,
+                                        'prime_beta_inf_inset(subplot_c)': prime_beta_inf_rows,
+                                        'prime_alpha_rem_inset(subplot_d)': prime_alpha_rem_rows,
+                                        'prime_beta_rem_inset(subplot_e)': prime_beta_rem_rows})
+    
+    return _si_figure_sensitivity_data
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    

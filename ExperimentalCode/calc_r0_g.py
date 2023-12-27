@@ -98,16 +98,11 @@ calc_params['occur_rem'] = occur(vgnr_rem, vgnr_type = 'srv', length = occur_len
 population_amounts = simu_test.get_population_amounts()
 del simu_test
 
-calc_selected = 7
+calc_selected = 1
 print("calc_selected: " + str(calc_selected))
 
-trans_list = [['weibull', 5, 7, 6], 
-              ['weibull', 5, 5, 6],
-              ['weibull', 7, 7, 6],
-              ['lognormal', 5, 7, 6],
-              ['gamma', 5, 7, 6],
-              ['weibull', 5, 7, 4],
-              ['weibull', 5, 7, 8],]
+trans_list = [['weibull', 7, 5, 6], 
+              ['weibull', 6, 6, 6],]
 param_range = {'weibull': np.arange(-6, 25, 1), 'gamma': np.arange(-6, 25, 1), 'lognormal': np.arange(6, 37, 1)}
 srv_funcs = {'weibull': func.srv_weibull_scale, 'gamma': func.srv_gamma_scale, 'lognormal': func.srv_lognormal}
 
@@ -177,7 +172,7 @@ for i in param_range[func_type]:
         idx += 1
         
 import pandas as pd   
-writer = pd.ExcelWriter("../Experimental_Data/r0_g_data/r0_g_calc_"+ key + ".xlsx")     
+writer = pd.ExcelWriter("./r0_g_data/r0_g_calc_"+ key + ".xlsx")     
 pd.DataFrame(r0_g_data).to_excel(writer, sheet_name = 'r0_g')
 writer.close()
 print("calc_selected: " + str(calc_selected))
