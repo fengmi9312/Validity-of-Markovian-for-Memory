@@ -249,6 +249,45 @@ void metapopulation::adjust_rem_time()
 	}
 }
 
+void metapopulation::reset_trans_time()
+{
+	std::vector<char> keys = { 's', 'i', 'w', 'd', 'v', 'p' };
+	for (std::vector<state_groups*>::iterator _group_it = groups.begin(); _group_it != groups.end(); ++_group_it)
+	{
+		for (std::vector<char>::const_iterator _key_it = keys.begin(); _key_it != keys.end(); ++_key_it)
+		{
+			for (std::list<node*>::iterator _node_it = (*_group_it)->state_group_map[*_key_it].begin(); _node_it != (*_group_it)->state_group_map[*_key_it].end(); ++_node_it)
+			{
+				if ((*_node_it)->get_state() == 'i')
+				{
+					(*_node_it)->set_state('i', time);
+				}
+			}
+		}
+	}
+}
+
+void metapopulation::reset_rem_time()
+{
+	double _tau_rem;
+	std::vector<char> keys = { 's', 'i', 'w', 'd', 'v', 'p' };
+	for (std::vector<state_groups*>::iterator _group_it = groups.begin(); _group_it != groups.end(); ++_group_it)
+	{
+		for (std::vector<char>::const_iterator _key_it = keys.begin(); _key_it != keys.end(); ++_key_it)
+		{
+			for (std::list<node*>::iterator _node_it = (*_group_it)->state_group_map[*_key_it].begin(); _node_it != (*_group_it)->state_group_map[*_key_it].end(); ++_node_it)
+			{
+				if ((*_node_it)->get_state() == 'i')
+				{
+					dist_rem->param((*_node_it)->get_params_rem());
+					_tau_rem = (*dist_rem)(generator);
+					(*_node_it)->set_rem_time(_tau_rem + time);
+				}
+			}
+		}
+	}
+}
+
 void metapopulation::set_seeds(std::vector<size_t>& _init_amounts, double _time)
 {
 	std::vector<std::vector<size_t>> _init_states(group_amount);
@@ -453,7 +492,7 @@ size_t metapopulation::add_vaccine(std::vector<size_t>& _allocation)
 					_node_ptr->set_state('v', time);
 					_node_ptr->set_remaining_ptime(int(delay));
 					groups[i]->state_group_map['s'].erase(_current_node_it);
-					groups[i]->state_group_map['w'].push_back(_node_ptr);
+					groups[i]->state_group_map['v'].push_back(_node_ptr);
 					--s_amount;
 					--s_population_amounts[i];
 					++v_amount;

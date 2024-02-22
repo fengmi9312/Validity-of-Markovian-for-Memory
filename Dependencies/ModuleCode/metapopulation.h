@@ -55,6 +55,8 @@ public:
 	void set_seeds(std::vector<double>& _init_probs, double _time);
 	void set_seeds(std::vector<std::vector<size_t>>& _init_states, double _time);
 	void adjust_rem_time();
+	void reset_trans_time();
+	void reset_rem_time();
 	void set_generator_seed(int _seed);
 	void spread_once();
 	size_t add_vaccine(std::vector<size_t>& _allocation);
