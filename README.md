@@ -29,7 +29,7 @@ Within the "<a href="https://github.com/fengmi9312/Validity-of-Markovian-for-Mem
 ## Experimental Code
 The "<a href="https://github.com/fengmi9312/Validity-of-Markovian-for-Memory/tree/main/ExperimentalCode">ExperimentalCode</a>" folder comprises the Python code responsible for generating all the experimental data.
 
-Users can run the code on both Linux and Windows systems (by default) by making adjustments in the code. Please refer to the comments in the code for detailed instructions on how to make the necessary adjustments. Furthermore, The script file "validity-tasks.sh" is used to allocate computing resources with Slurm on Linux.
+Users can run the code on both Linux and Windows systems (by default) by making adjustments in the code. Please refer to the comments in the code for detailed instructions on how to make the necessary adjustments. Furthermore, The script file "validity_tasks.sh" is used to allocate computing resources with Slurm on Linux.
 
 The folder "<a href="https://github.com/fengmi9312/Validity-of-Markovian-for-Memory/tree/main/ExperimentalData">ExperimentalData</a>" is where the experimental data can be generated.
 
