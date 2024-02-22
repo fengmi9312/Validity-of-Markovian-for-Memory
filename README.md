@@ -5,16 +5,16 @@ The extension modules, experimental codes, figure codes and application package 
 [Mi Feng](https://scholar.google.com/citations?user=09WNOQwAAAAJ&hl=en&oi=ao)<sup>1,2</sup>, [Liang Tian](https://physics.hkbu.edu.hk/people/tian-liang)<sup>1,3,\*</sup>, [Ying-Cheng Lai](http://chaos1.la.asu.edu/~ylai1/)<sup>4,5</sup>, [Changsong Zhou](https://physics.hkbu.edu.hk/people/zhou-chang-song)<sup>1,2,3,\*</sup> 
     
 <sup>*</sup>Correspondence: [liangtian@hkbu.edu.hk](mailto:liangtian@hkbu.edu.hk), [cszhou@hkbu.edu.hk](mailto:cszhou@hkbu.edu.hk)
- 
+
 <sup>1</sup>[Department of Physics](https://physics.hkbu.edu.hk/), [Hong Kong Baptist University](https://www.hkbu.edu.hk/), Kowloon Tong, Hong Kong SAR 999077, China  
 <sup>2</sup>[Centre for Nonlinear Studies and Beijing-Hong Kong-Singapore Joint Centre for Nonlinear and Complex Systems (Hong Kong)](https://scholars.hkbu.edu.hk/en/organisations/the-beijing-hong-kong-singapore-joint-centre-for-nonlinear-and-co), [Hong Kong Baptist University](https://www.hkbu.edu.hk/), Kowloon Tong, Hong Kong SAR 999077, China  
 <sup>3</sup>[Institute of Computational and Theoretical Studies](https://www.icts.hkbu.edu.hk/), [Hong Kong Baptist University](https://www.hkbu.edu.hk/), Kowloon, Hong Kong SAR 999077, China  
 <sup>4</sup>[School of Electrical, Computer and Energy Engineering](https://ecee.engineering.asu.edu/), [Arizona State University](https://www.asu.edu/), Tempe, AZ 85287, USA  
 <sup>5</sup>[Department of Physics](https://physics.asu.edu/), [Arizona State University](https://www.asu.edu/), Tempe, Arizona 85287, USA
- 
+
 ## Table of Contents
 - [Paper](#Paper)
-- [Module Code](#Module-Code)
+- [Dependencies](#Dependencies)
 - [Experiment Code](#Experiment-Code)
 - [Data Code](#Data-Code)
 - [Figure Code](#Figure-Code)
@@ -24,21 +24,27 @@ The extension modules, experimental codes, figure codes and application package 
 The main text as well as the Supplementary Information can be downloaded through <a href = "https://github.com/fengmi9312/Validity-of-Markovian-for-Memory/raw/main/Maintext-SI.pdf">Link</a>. And the main text in arXiv is available at <a href="https://arxiv.org/pdf/2306.16864">arXiv</a>. The latex version can be downloaded via <a href="https://arxiv.org/e-print/2306.16864">source</a>.
 
 ## Dependencies
-Within the "Dependencies" folder, you'll find the data dependencies and C++ code that generates the module for conducting Monte Carlo simulations of the stratified SIR spreading dynamics model. This module plays a crucial role in the experimental and data generation processes that follow.
+Within the "<a href="https://github.com/fengmi9312/Validity-of-Markovian-for-Memory/tree/main/Dependencies">Dependencies</a>" folder, you'll find the data dependencies, code dependencies and C++ code that generates the module for conducting Monte Carlo simulations of the stratified SIR spreading dynamics model. This module plays a crucial role in the experimental and data generation processes that follow.
 
 ## Experimental Code
-The "ExperimentalCode" folder comprises the Python code responsible for generating all the experimental data presented in this paper.
+The "<a href="https://github.com/fengmi9312/Validity-of-Markovian-for-Memory/tree/main/ExperimentalCode">ExperimentalCode</a>" folder comprises the Python code responsible for generating all the experimental data.
+
+Users can run the code on both Linux and Windows systems (by default) by making adjustments in the code. Please refer to the comments in the code for detailed instructions on how to make the necessary adjustments.
+
+The folder "<a href="https://github.com/fengmi9312/Validity-of-Markovian-for-Memory/tree/main/ExperimentalData">ExperimentalData</a>" is where the experimental data can be generated.
 
 ## Data Code
-The folder titled "DataCode" contains the Python code that is utilized to generate the figure data based on the experimental data presented in this paper.
+The folder titled "<a href="https://github.com/fengmi9312/Validity-of-Markovian-for-Memory/tree/main/DataCode">DataCode</a>" contains the Python code that is utilized to generate the figure data based on the experimental data (in folder "<a href="https://github.com/fengmi9312/Validity-of-Markovian-for-Memory/tree/main/ExperimentalData">ExperimentalData</a>") presented in this paper.
+
+The folder "<a href="https://github.com/fengmi9312/Validity-of-Markovian-for-Memory/tree/main/FigureData">FigureData</a>" is where the figure data can be generated.
 
 ## Figure Code
-Within the "FigureCode" folder, you will find the Python code responsible for extracting the valid figure data from the experimental data and plotting all the figures showcased in both the main text and supplementary information.
-#### Figure Data
-Figure data are available at <a href="https://github.com/fengmi9312/Validity-of-Markovian-for-Memory/tree/main/FigureData">FigureData</a>.
+Within the "<a href="https://github.com/fengmi9312/Validity-of-Markovian-for-Memory/tree/main/FigureCode">FigureCode</a>" folder, you will find the Python code responsible for extracting the valid figure data from the experimental data and plotting all the figures showcased in both the main text and supplementary information.
+
+The folder "<a href="https://github.com/fengmi9312/Validity-of-Markovian-for-Memory/tree/main/Figure">Figure</a>" is where the figures can be generated.
 
 ## Applications
-we have developed two types of applications, namely a web-based and a Python version, to aid researchers in determining the generation time distribution, estimating the parameters of the Markovian dynamics in transient-state equivalence, and rectifying errors in $R_0$ and steady-state forecasting.
+We have developed two types of applications, namely a web-based and a Python version, to aid researchers in determining the generation time distribution, estimating the parameters of the Markovian dynamics in transient-state equivalence, and rectifying errors in $R_0$ and steady-state forecasting.
 
 ### Web-based Application
 Readers can access the <a href = "https://cns.hkbu.edu.hk/toolbox/Validity-of-Markovian-for-Memory/main.html">web-based application</a> online. The source code for the web application can be found in the folder "./applications/Web-based_application".
