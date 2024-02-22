@@ -17,9 +17,9 @@ def import_from_file(_file_dir):
     return _data
 
 figure_theories_data_imported = import_from_file('../FigureData/theories_data(Figure_2).xlsx')
-si_figure_percentile_data_imported = import_from_file('../FigureData/percentile_data(Figure_S3).xlsx')
+si_figure_percentile_data_imported = import_from_file('../FigureData/percentile_data(Figure_S5).xlsx')
 si_figure_markovian_time_data_imported = import_from_file('../FigureData/markovian_time_data(Figure_S1).xlsx')
-si_figure_error_percentile_data_imported = import_from_file('../FigureData/error_percentile_data(Figure_S2).xlsx')
+si_figure_error_percentile_data_imported = import_from_file('../FigureData/error_percentile_data(Figure_S4).xlsx')
 figure_analysis_data_imported = import_from_file('../FigureData/analysis_data(Figure_3_S2).xlsx')
 figure_forecasting_data_imported = import_from_file('../FigureData/forecasting_data(Figure_4).xlsx')
 figure_prevention_data_imported = import_from_file('../FigureData/prevention_data(Figure_5).xlsx')
@@ -37,55 +37,54 @@ format_name = 'png'
 
 fig = figure_func.figure_theories(figure_theories_data_imported)[0]
 if figure_exported:
-    fig.savefig('../FigureTmp/theories.png', format = 'png', dpi = png_dpi)
+    fig.savefig('../Figure/Figure 2.'+format_name, format = 'png', dpi = png_dpi)
 if figure_closed:
     plt.close(fig)
 
 fig = figure_func.figure_analysis(figure_analysis_data_imported)[0]
 if figure_exported:
-    fig.savefig('../FigureTmp/analysis.'+format_name, format = format_name, dpi = png_dpi)
+    fig.savefig('../Figure/Figure 3de.'+format_name, format = format_name, dpi = png_dpi)
 if figure_closed:
     plt.close(fig)
 
 fig = figure_func.figure_analysis_addition(figure_analysis_data_imported)[0]
 if figure_exported:
-    fig.savefig('../FigureTmp/si_analysis_addition.'+format_name, format = format_name, dpi = png_dpi)
+    fig.savefig('../Figure/si_analysis_addition.'+format_name, format = format_name, dpi = png_dpi)
 if figure_closed:
     plt.close(fig)
 
 fig = figure_func.figure_forecasting(figure_forecasting_data_imported, fitting_period_data_imported)[0]
 if figure_exported:
-    fig.savefig('../FigureTmp/forecasting.'+format_name, format = format_name, dpi = png_dpi)
+    fig.savefig('../Figure/Figure 4.'+format_name, format = format_name, dpi = png_dpi)
 if figure_closed:
     plt.close(fig)
 
 fig = figure_func.figure_prevention(figure_prevention_data_imported, fitting_period_data_imported)[0]
 if figure_exported:
-    fig.savefig('../FigureTmp/prevention.'+format_name, format = format_name, dpi = png_dpi)
+    fig.savefig('../Figure/Figure 5.'+format_name, format = format_name, dpi = png_dpi)
 if figure_closed:
     plt.close(fig)
 
 fig = figure_func.si_figure_percentile(si_figure_percentile_data_imported)[0]
 if figure_exported:
-    fig.savefig('../FigureTmp/si_percentile.'+format_name, format = format_name, dpi = png_dpi)
+    fig.savefig('../Figure/si_percentile.'+format_name, format = format_name, dpi = png_dpi)
 if figure_closed:
     plt.close(fig)
 
 fig = figure_func.si_figure_markovian_time(si_figure_markovian_time_data_imported)[0]
 if figure_exported:
-    fig.savefig('../FigureTmp/si_markovian_time.'+format_name, format = format_name, dpi = png_dpi)
+    fig.savefig('../Figure/si_markovian_time.'+format_name, format = format_name, dpi = png_dpi)
 if figure_closed:
     plt.close(fig)
 
 fig = figure_func.si_figure_error_percentile(si_figure_error_percentile_data_imported)[0]
 if figure_exported:
-    fig.savefig('../FigureTmp/si_error_percentile.'+format_name, format = format_name, dpi = png_dpi)
+    fig.savefig('../Figure/si_error_percentile.'+format_name, format = format_name, dpi = png_dpi)
 if figure_closed:
     plt.close(fig)
 
 fig = figure_func.si_figure_sensitivity(si_figure_sensitivity_data_imported)[0]
 if figure_exported:
-    fig.savefig('../FigureTmp/si_sensitivity.'+format_name, format = format_name, dpi = png_dpi)
+    fig.savefig('../Figure/si_sensitivity.'+format_name, format = format_name, dpi = png_dpi)
 if figure_closed:
     plt.close(fig)
-

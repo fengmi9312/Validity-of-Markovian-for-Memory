@@ -143,7 +143,6 @@ class sir_model:
         
         self.__s_tot = np.append(self.__s_tot, np.zeros(self.__period_len))
         self.__i_in_tot = np.append(self.__i_in_tot, np.zeros(self.__period_len))
-        self.__s_eff_tot = np.append(self.__s_eff_tot, np.zeros(self.__period_len))
         self.__i_tot = np.append(self.__i_tot, np.zeros(self.__period_len))
         self.__r_tot = np.append(self.__r_tot, np.zeros(self.__period_len))
         self.__p_tot = np.append(self.__p_tot, np.zeros(self.__period_len))
@@ -269,6 +268,9 @@ class sir_model:
                 self.__p[self.__time_int] = self.__p[self.__time_int] + p_inc
                 self.__s[self.__time_int] = self.__s[self.__time_int] - p_inc
                 self.__s_eff[self.__current_time_int] = self.__s_eff[self.__current_time_int] - vac_alloc_tmp * self.__eta
+                self.__p_tot[self.__time_int] = self.__p[self.__time_int] @ self.__populations
+                self.__s_tot[self.__time_int] = self.__s[self.__time_int] @ self.__populations
+                self.__s_eff_tot[self.__current_time_int] = self.__s_eff[self.__current_time_int] @ self.__populations
         return remaining_vac
     
     
@@ -291,8 +293,8 @@ class sir_model:
                                                 self.__s_eff[self.__current_time_int] * self.__j[self.__time_int - self.__delay]
             self.__current_time_int = self.__current_time_int + 1
             self.__time_line.append(self.__time_line[-1] + self.__step)
-        self.__j[self.__time_int + 1] = self.__calc_inf()
         self.__time_int = self.__time_int + 1
+        self.__j[self.__time_int] = self.__calc_inf()
         self.__calc_tot()
     
   
@@ -796,19 +798,18 @@ def get_fitting_data(_idx, _spreading_params, _k, _amount_seeds,
     _calc_params['occur_inf'] = None
     _calc_params['occur_rem'] = None
     _calc_params['k'] = _k
-    fitting_once = [sir_model(**_calc_params) for i in range(3)]
-    _init_params_rem = [np.array([1.0, ]), np.array([1.0, 1.0]), np.array([1.0, 1.0])]
-    _init_params_inf = [np.array([1.0, ]), np.array([1.0, 1.0]), np.array([1.0, 1.0])]
-    _fitting_func = ['exponent', 'weibull_rate', 'gamma_rate']
+    fitting_once = [sir_model(**_calc_params) for i in range(2)]
+    _init_params_rem = [np.array([1.0, ]), np.array([1.0, 1.0])]
+    _init_params_inf = [np.array([1.0, ]), np.array([1.0, 1.0])]
+    _fitting_func = ['exponent', 'weibull_rate']
     _bounds = [Bounds(np.ones(1) * 0.001, np.ones(1) * np.inf),
-               Bounds(np.ones(2) * 0.001, np.ones(2) * np.inf),
                Bounds(np.ones(2) * 0.001, np.ones(2) * np.inf)]
-    _rem_fitting_res = [None, None, None]
-    _inf_fitting_res = [None, None, None]
+    _rem_fitting_res = [None, None]
+    _inf_fitting_res = [None, None]
     ###########################################################################
     
     ######################## fitting ##########################################
-    for i in range(3):
+    for i in range(2):
         _init_params = _init_params_rem[i]
         while True:
             _rem_fitting_res[i] =\
@@ -836,9 +837,7 @@ def get_fitting_data(_idx, _spreading_params, _k, _amount_seeds,
     ###################### return data ###############################        
     _params = {'exponent_inf': _inf_fitting_res[0].x[0], 'exponent_rem': _rem_fitting_res[0].x[0], 
                'weibull_alpha_inf':_inf_fitting_res[1].x[0], 'weibull_beta_inf':1.0 / _inf_fitting_res[1].x[1], 
-               'weibull_alpha_rem':_rem_fitting_res[1].x[0], 'weibull_beta_rem':1.0 / _rem_fitting_res[1].x[1], 
-               'gamma_alpha_inf':_inf_fitting_res[2].x[0], 'gamma_beta_inf':1.0 / _inf_fitting_res[2].x[1], 
-               'gamma_alpha_rem':_rem_fitting_res[2].x[0], 'gamma_beta_rem':1.0 / _rem_fitting_res[2].x[1],
+               'weibull_alpha_rem':_rem_fitting_res[1].x[0], 'weibull_beta_rem':1.0 / _rem_fitting_res[1].x[1],
                'fitting_length': _fitting_length}
     return {'params':_params, 'i_in_data': _i_in_data, 'simu_curves': _simu_once_data}
 
@@ -944,7 +943,6 @@ def get_general_fitting_data(_idx, _spreading_survivals, _k, _amount_seeds,
                'fitting_length': _fitting_length}
     return {'params':_params, 'i_in_data': _i_in_data, 'simu_curves': _simu_once_data}
 
-
 def get_fitting_data_with_real(fitting_data, calc_params, params_fitting, occur_length = 4000):
     
     ################## initialize fitting model ###############################
@@ -952,19 +950,18 @@ def get_fitting_data_with_real(fitting_data, calc_params, params_fitting, occur_
     _calc_params['real_data'] = fitting_data
     _calc_params['occur_inf'] = None
     _calc_params['occur_rem'] = None
-    fitting_once = [sir_model(**_calc_params) for i in range(3)]
-    _init_params_rem = [np.array([2.0, ]), np.array([2.0, 2.0]), np.array([2.0, 2.0])]
-    _init_params_inf = [np.array([2.0, ]), np.array([2.0, 2.0]), np.array([2.0, 2.0])]
-    _fitting_func = ['exponent', 'weibull_rate', 'gamma_rate']
+    fitting_once = [sir_model(**_calc_params) for i in range(2)]
+    _init_params_rem = [np.array([1.0, ]), np.array([1.0, 1.0])]
+    _init_params_inf = [np.array([1.0, ]), np.array([1.0, 1.0])]
+    _fitting_func = ['exponent', 'weibull_rate']
     _bounds = [Bounds(np.ones(1) * 0.001, np.ones(1) * np.inf),
-               Bounds(np.ones(2) * 0.001, np.ones(2) * np.inf),
                Bounds(np.ones(2) * 0.001, np.ones(2) * np.inf)]
-    _rem_fitting_res = [None, None, None]
-    _inf_fitting_res = [None, None, None]
+    _rem_fitting_res = [None, None]
+    _inf_fitting_res = [None, None]
     ###########################################################################
     
     ######################## fitting ##########################################
-    for i in range(3):
+    for i in range(2):
         _init_params = _init_params_rem[i]
         while True:
             _rem_fitting_res[i] =\
@@ -992,120 +989,25 @@ def get_fitting_data_with_real(fitting_data, calc_params, params_fitting, occur_
     ###################### return data ###############################        
     _params = {'exponent_inf': _inf_fitting_res[0].x[0], 'exponent_rem': _rem_fitting_res[0].x[0], 
                'weibull_alpha_inf':_inf_fitting_res[1].x[0], 'weibull_beta_inf':1.0 / _inf_fitting_res[1].x[1], 
-               'weibull_alpha_rem':_rem_fitting_res[1].x[0], 'weibull_beta_rem':1.0 / _rem_fitting_res[1].x[1], 
-               'gamma_alpha_inf':_inf_fitting_res[2].x[0], 'gamma_beta_inf':1.0 / _inf_fitting_res[2].x[1], 
-               'gamma_alpha_rem':_rem_fitting_res[2].x[0], 'gamma_beta_rem':1.0 / _rem_fitting_res[2].x[1]}
+               'weibull_alpha_rem':_rem_fitting_res[1].x[0], 'weibull_beta_rem':1.0 / _rem_fitting_res[1].x[1]}
     return _params
 
-
-def get_fitting_data_with_cum(_idx, _spreading_params, _k, _amount_seeds, 
-             simu_structure_params, calc_params, params_fitting, 
-             fitting_level= 0.1, occur_length = 4000):
-    
-    ################ initialize the simulation model ##########################
-    _simu_structure_params = deepcopy(simu_structure_params)
-    _simu_structure_params['k'] = _k
-    simu_once = ms.simu(**_simu_structure_params)
-    simu_once.set_generator_seed(_idx)
-    simu_once.set_spreading_func('weibull', 'weibull')
-    simu_once.set_total_spreading_params(_spreading_params[:2],
-                                         _spreading_params[2:])
-    simu_once.set_amount_seeds(_amount_seeds)
-    ###########################################################################
-    
-    #################### get the simulation data ##############################
-    _simu_once_data = {'s': [], 'i': [], 'r': [], 'w': [], 'c': [], 'd': [], 'y': []}
-    _simu_once_arr_data = {'c': []}
-    for _target in _simu_once_data.keys():
-        _simu_once_data[_target].append(simu_once.get_x_amount(_target) / simu_once.get_node_amount())
-    _simu_once_arr_data['c'].append(np.array(simu_once.get_x_amount_arr('c')) / np.array(simu_once.get_population_amounts()))
-    while True:
-        if simu_once.get_i_amount() == 0:
-            break
-        simu_once.spread_once()
-        for _target in _simu_once_data.keys():
-            _simu_once_data[_target].append(simu_once.get_x_amount(_target) / simu_once.get_node_amount())
-        _simu_once_arr_data['c'].append(np.array(simu_once.get_x_amount_arr('c')) / np.array(simu_once.get_population_amounts()))
-    for _target in _simu_once_data.keys():
-        _simu_once_data[_target] = np.array(_simu_once_data[_target])
-    _simu_once_arr_data['c'] = np.array(_simu_once_arr_data['c'])
-    del simu_once
-    ###########################################################################
-    
-    ##################### get the simulation data for fitting #################
-    _fitting_data = {'confirmed': [], 'removal': [], 'confirmed_arr': []}
-    _fitting_end_c = (_simu_once_data['c'][-1] - _simu_once_data['c'][0]) * fitting_level + _simu_once_data['c'][0]
-    for _i in range(len(_simu_once_data['c'])):
-        _fitting_data['confirmed'].append(_simu_once_data['c'][_i])
-        _fitting_data['removal'].append(_simu_once_data['r'][_i])
-        _fitting_data['confirmed_arr'].append(_simu_once_arr_data['c'][_i])
-        if _fitting_data['confirmed'][-1] > _fitting_end_c:
-            break
-    _fitting_data['confirmed'] = np.array(_fitting_data['confirmed'])
-    _fitting_data['removal'] = np.array(_fitting_data['removal'])
-    _fitting_data['confirmed_arr'] = np.array(_fitting_data['confirmed_arr'])
-    _i_in_data = np.append(_fitting_data['confirmed_arr'][0:1], 
-                           np.diff(_fitting_data['confirmed_arr'], axis = 0), axis = 0)
-    ###########################################################################
-    
-    ################## initialize fitting model ###############################
-    _calc_params = deepcopy(calc_params)
-    _calc_params['real_data'] = _fitting_data
-    _calc_params['occur_inf'] = None
-    _calc_params['occur_rem'] = None
-    _calc_params['k'] = _k
-    fitting_once = [sir_model(**_calc_params) for i in range(3)]
-    _init_params_cum = [np.ones(2), np.ones(4), np.ones(4)]
-    _fitting_func = ['exponent', 'weibull_rate', 'gamma_rate']
-    _bounds = [Bounds(np.ones(2) * 0.01, np.ones(2) * np.inf),
-               Bounds(np.ones(4) * 0.01, np.ones(4) * np.inf),
-               Bounds(np.ones(4) * 0.01, np.ones(4) * np.inf)]
-    _param_div = [1, 2, 2]
-    _fitting_res = [None, None, None]
-    ###########################################################################
-    
-    ######################## fitting ##########################################
-    for i in range(3):
-        _init_params = _init_params_cum[i]
-        while True:
-            _fitting_res[i] =\
-            fitting_once[i].fit_cum_from_data(init_params = _init_params, 
-                                              occur_length = occur_length,  
-                                              fitting_func_inf = _fitting_func[i], 
-                                              fitting_func_rem = _fitting_func[i], 
-                                              param_div = _param_div[i],
-                                              bounds = _bounds[i], **params_fitting)
-            if _fitting_res[i].success:
-                break
-            else:
-                _init_params = _init_params_cum[i] * np.random.uniform(0.7, 1.3) 
-    ###########################################################################
-    
-    ###################### return data ###############################        
-    _params = {'exponent_inf': _fitting_res[0].x[0], 'exponent_rem': _fitting_res[0].x[1], 
-               'weibull_alpha_inf':_fitting_res[1].x[0], 'weibull_beta_inf':1.0 / _fitting_res[1].x[1], 
-               'weibull_alpha_rem':_fitting_res[1].x[2], 'weibull_beta_rem':1.0 / _fitting_res[1].x[3], 
-               'gamma_alpha_inf':_fitting_res[2].x[0], 'gamma_beta_inf':1.0 / _fitting_res[2].x[1], 
-               'gamma_alpha_rem':_fitting_res[2].x[2], 'gamma_beta_rem':1.0 / _fitting_res[2].x[3]}
-    return {'params':_params, 'i_in_data': _i_in_data, 'simu_curves': _simu_once_data}
     
 def get_calc_data(_params, _i_in_data, _k, _simu_curves, calc_params, occur_length = 4000):
     fitting_once = []
-    _srv_func = [func.srv_exponent, func.srv_weibull_scale, func.srv_gamma_scale]
+    _srv_func = [func.srv_exponent, func.srv_weibull_scale]
     _inf_params = [(_params['exponent_inf'],),
-                  (_params['weibull_alpha_inf'], _params['weibull_beta_inf']),
-                  (_params['gamma_alpha_inf'], _params['gamma_beta_inf'])]
+                  (_params['weibull_alpha_inf'], _params['weibull_beta_inf'])]
     _rem_params = [(_params['exponent_rem'],),
-                  (_params['weibull_alpha_rem'], _params['weibull_beta_rem']),
-                  (_params['gamma_alpha_rem'], _params['gamma_beta_rem'])]
+                  (_params['weibull_alpha_rem'], _params['weibull_beta_rem'])]
     _rem_curves = {}
-    _nmfuncs = ['exponent', 'weibull', 'gamma']
+    _nmfuncs = ['exponent', 'weibull']
     for idx, _nmfunc in enumerate(_nmfuncs):
         _i_in = np.append(_simu_curves['c'][0], np.diff(_simu_curves['c']))
         _data_len = len(_i_in)
         _rem_srv = np.array([1 - _srv_func[idx](j * calc_params['step'], *_rem_params[idx]) for j in range(_data_len)])
         _rem_curves[_nmfunc] = np.convolve(_rem_srv, _i_in, 'full')[:_data_len] + _simu_curves['r'][0]
-    for i in range(3):
+    for i in range(2):
         _calc_params = deepcopy(calc_params)
         vgnr_inf = gnr(_srv_func[i], 'func', _inf_params[i])
         vgnr_rem = gnr(_srv_func[i], 'func', _rem_params[i])
@@ -1115,7 +1017,7 @@ def get_calc_data(_params, _i_in_data, _k, _simu_curves, calc_params, occur_leng
         fitting_once.append(sir_model(**_calc_params))
         fitting_once[i].set_i_in_init(_i_in_data)
     for j in range(len(_simu_curves['c']) - len(_i_in_data)):
-        for i in range(3):
+        for i in range(2):
             fitting_once[i].spread_once()
     _calc_curves = {}
     _targets = ['s', 'i', 'r', 'c', 'd', 'y']
@@ -1151,28 +1053,6 @@ def get_v_data(_idx, _simu_spreading_params, _fitting_spreading_params, spreadin
                simu_structure_params, calc_params, 
                daily_vac_amount, vac_times = 7, vac_duration = 24, occur_length = 4000):
     
-    def _get_alloc(s_arr, vac_amount, vac_group = None, adjust = True):
-        if vac_group is None or len(vac_group) == 0:
-            return None
-        if adjust:
-            vac_alloc = np.zeros(len(s_arr), dtype = np.int64)
-        else:
-            vac_alloc = np.zeros(len(s_arr))
-        if s_arr[vac_group].sum() == 0:
-            proportion = np.ones(len(vac_group)) / len(vac_group)
-        else:
-            proportion = s_arr[vac_group] / s_arr[vac_group].sum()
-        if adjust:
-            vac_alloc_tmp = (proportion * vac_amount).astype(np.int32)
-            for i in np.argsort(proportion * vac_amount - vac_alloc_tmp)[::-1]:
-                vac_alloc_tmp[i] += 1
-                if vac_alloc_tmp.sum() == vac_amount:
-                    break
-            vac_alloc[vac_group] = vac_alloc_tmp
-        else:
-            vac_alloc[vac_group] = proportion * vac_amount
-        return vac_alloc
-    
     vac_groups = {'no_vaccine': None, 'under_20': np.arange(0, 2).tolist(), 
                   '20-49': np.arange(2, 5).tolist(), 
                   '20+': np.arange(2, 8).tolist(), '60+': np.arange(6, 8).tolist(), 
@@ -1200,8 +1080,7 @@ def get_v_data(_idx, _simu_spreading_params, _fitting_spreading_params, spreadin
             simu_data[vac_group_key][_target].append(simu_once.get_x_amount(_target) / simu_once.get_node_amount())
         for i in range(spreading_length - 1):
             if i in vac_dates:
-                vac_alloc_simu = _get_alloc(np.array(simu_once.get_s_amount_arr()), np.array(simu_once.get_population_amounts()), 
-                                            daily_vac_amount, vac_groups[vac_group_key])
+                vac_alloc_simu = func.get_alloc(np.array(simu_once.get_s_amount_arr()), simu_structure_params['populations'], daily_vac_amount, vac_groups[vac_group_key])
                 if vac_alloc_simu is not None:
                     simu_once.add_vaccine(vac_alloc_simu)
             simu_once.spread_once()
@@ -1216,12 +1095,10 @@ def get_v_data(_idx, _simu_spreading_params, _fitting_spreading_params, spreadin
         calc_once = []
         _srv_func = [func.srv_exponent, func.srv_weibull_scale, func.srv_gamma_scale]
         _inf_params = [(_fitting_spreading_params['exponent_inf'],),
-                      (_fitting_spreading_params['weibull_alpha_inf'], _fitting_spreading_params['weibull_beta_inf']),
-                      (_fitting_spreading_params['gamma_alpha_inf'], _fitting_spreading_params['gamma_beta_inf'])]
+                      (_fitting_spreading_params['weibull_alpha_inf'], _fitting_spreading_params['weibull_beta_inf'])]
         _rem_params = [(_fitting_spreading_params['exponent_rem'],),
-                      (_fitting_spreading_params['weibull_alpha_rem'], _fitting_spreading_params['weibull_beta_rem']),
-                      (_fitting_spreading_params['gamma_alpha_rem'], _fitting_spreading_params['gamma_beta_rem'])]
-        for i in range(3):
+                      (_fitting_spreading_params['weibull_alpha_rem'], _fitting_spreading_params['weibull_beta_rem'])]
+        for i in range(2):
             _calc_params = deepcopy(calc_params)
             vgnr_inf = gnr(_srv_func[i], 'func', _inf_params[i])
             vgnr_rem = gnr(_srv_func[i], 'func', _rem_params[i])
@@ -1232,8 +1109,7 @@ def get_v_data(_idx, _simu_spreading_params, _fitting_spreading_params, spreadin
             calc_once[i].set_i_in_init(_i_in_data)
             for j in range(len(_i_in_data) - 1, spreading_length - 1):
                 if j in vac_dates:
-                    vac_alloc_calc = _get_alloc(np.array(calc_once[i].getc_s_eff()), np.array(calc_once[i].get_populations()), 
-                                                daily_vac_amount / _node_amount, vac_groups[vac_group_key], 
+                    vac_alloc_calc = func.get_alloc(np.array(calc_once[i].getc_s_eff()), calc_params['populations'], daily_vac_amount / _node_amount, vac_groups[vac_group_key], 
                                                 adjust = False)
                     if vac_alloc_calc is not None:
                         calc_once[i].add_vaccine(vac_alloc_calc / calc_once[i].get_populations())
@@ -1241,10 +1117,8 @@ def get_v_data(_idx, _simu_spreading_params, _fitting_spreading_params, spreadin
         for _target in ['s', 'i', 'r', 'c', 'd', 'y']:
             calc_data[vac_group_key]['exponent_' + _target] = calc_once[0].get_x_tot(_target)
             calc_data[vac_group_key]['weibull_' + _target] = calc_once[1].get_x_tot(_target)
-            calc_data[vac_group_key]['gamma_' + _target] = calc_once[2].get_x_tot(_target)
         calc_data[vac_group_key]['exponent_w'] = calc_data[vac_group_key]['exponent_r'] - calc_data[vac_group_key]['exponent_d']
         calc_data[vac_group_key]['weibull_w'] = calc_data[vac_group_key]['weibull_r'] - calc_data[vac_group_key]['weibull_d']
-        calc_data[vac_group_key]['gamma_w'] = calc_data[vac_group_key]['gamma_r'] - calc_data[vac_group_key]['gamma_d']
         del calc_once
     
     return {'simu_data': simu_data, 'calc_data': calc_data}
@@ -1253,29 +1127,6 @@ def get_general_v_data(_idx, _spreading_survivals, _fitting_spreading_params, sp
                _i_in_data, _k, _amount_seeds, 
                simu_structure_params, calc_params, 
                daily_vac_amount, vac_times = 7, vac_duration = 24, occur_length = 4000):
-    
-    def _get_alloc(s_arr, vac_amount, vac_group = None, adjust = True):
-        if vac_group is None or len(vac_group) == 0:
-            return None
-        if adjust:
-            vac_alloc = np.zeros(len(s_arr), dtype = np.int64)
-        else:
-            vac_alloc = np.zeros(len(s_arr))
-        if s_arr[vac_group].sum() == 0:
-            proportion = np.ones(len(vac_group)) / len(vac_group)
-        else:
-            proportion = s_arr[vac_group] / s_arr[vac_group].sum()
-        if adjust:
-            vac_alloc_tmp = (proportion * vac_amount).astype(np.int32)
-            for i in np.argsort(proportion * vac_amount - vac_alloc_tmp)[::-1]:
-                vac_alloc_tmp[i] += 1
-                if vac_alloc_tmp.sum() == vac_amount:
-                    break
-            vac_alloc[vac_group] = vac_alloc_tmp
-        else:
-            vac_alloc[vac_group] = proportion * vac_amount
-        return vac_alloc
-
     
     vac_groups = {'no_vaccine': None, 'under_20': np.arange(0, 2).tolist(), 
                   '20-49': np.arange(2, 5).tolist(), 
@@ -1304,8 +1155,7 @@ def get_general_v_data(_idx, _spreading_survivals, _fitting_spreading_params, sp
             simu_data[vac_group_key][_target].append(simu_once.get_x_amount(_target) / simu_once.get_node_amount())
         for i in range(spreading_length - 1):
             if i in vac_dates:
-                vac_alloc_simu = _get_alloc(np.array(simu_once.get_s_amount_arr()), np.array(simu_once.get_population_amounts()), 
-                                            daily_vac_amount, vac_groups[vac_group_key])
+                vac_alloc_simu = func.get_alloc(np.array(simu_once.get_s_amount_arr()), _simu_structure_params['populations'], daily_vac_amount, vac_groups[vac_group_key])
                 if vac_alloc_simu is not None:
                     simu_once.add_vaccine(vac_alloc_simu)
             simu_once.spread_once()
@@ -1334,8 +1184,7 @@ def get_general_v_data(_idx, _spreading_survivals, _fitting_spreading_params, sp
             calc_once[i].set_i_in_init(_i_in_data)
             for j in range(len(_i_in_data) - 1, spreading_length - 1):
                 if j in vac_dates:
-                    vac_alloc_calc = _get_alloc(np.array(calc_once[i].getc_s_eff()), np.array(calc_once[i].get_populations()), 
-                                                daily_vac_amount / _node_amount, vac_groups[vac_group_key], 
+                    vac_alloc_calc = func.get_alloc(np.array(calc_once[i].getc_s_eff()), calc_params['populations'], daily_vac_amount / _node_amount, vac_groups[vac_group_key], 
                                                 adjust = False)
                     if vac_alloc_calc is not None:
                         calc_once[i].add_vaccine(vac_alloc_calc / calc_once[i].get_populations())
@@ -1349,158 +1198,11 @@ def get_general_v_data(_idx, _spreading_survivals, _fitting_spreading_params, sp
     
     return {'simu_data': simu_data, 'calc_data': calc_data}
 
-
-def get_optimal_v_data(_idx, _simu_spreading_params, _fitting_spreading_params,
-                       _i_in_data, _k, _amount_seeds, 
-                       simu_structure_params, calc_params, 
-                       daily_vac_amount, vac_times = 14, vac_duration = 24, consequent_step = 24 * 30, occur_length = 4000):
-    
-    _daily_vac_p = daily_vac_amount / simu_structure_params['node_amount']
-    _simu_structure_params = deepcopy(simu_structure_params)
-    _simu_structure_params['k'] = _k
-    simu_once = ms.simu(**_simu_structure_params)
-    _population_amounts = np.array(simu_once.get_population_amounts())
-    del simu_once
-    targets = ['c', 'd', 'y']
-    simu_data = {}
-    _srv_func = [func.srv_exponent, func.srv_weibull_scale, func.srv_gamma_scale]
-    _inf_params = [(_fitting_spreading_params['exponent_inf'],),
-                  (_fitting_spreading_params['weibull_alpha_inf'], _fitting_spreading_params['weibull_beta_inf']),
-                  (_fitting_spreading_params['gamma_alpha_inf'], _fitting_spreading_params['gamma_beta_inf'])]
-    _rem_params = [(_fitting_spreading_params['exponent_rem'],),
-                  (_fitting_spreading_params['weibull_alpha_rem'], _fitting_spreading_params['weibull_beta_rem']),
-                  (_fitting_spreading_params['gamma_alpha_rem'], _fitting_spreading_params['gamma_beta_rem'])]
-    for i, way in enumerate(['exponent', 'weibull', 'gamma']):
-        simu_data[way] = {}
-        _calc_params = deepcopy(calc_params)
-        vgnr_inf = gnr(_srv_func[i], 'func', _inf_params[i])
-        vgnr_rem = gnr(_srv_func[i], 'func', _rem_params[i])
-        _calc_params['occur_inf'] = occur(vgnr_inf, vgnr_type = 'srv', length = occur_length, step = _calc_params['step'])
-        _calc_params['occur_rem'] = occur(vgnr_rem, vgnr_type = 'srv', length = occur_length, step = _calc_params['step'])
-        _calc_params['k'] = _k
-        calc_once = sir_model(**_calc_params)
-        calc_once.set_i_in_init(_i_in_data)
-        calc_once.spread_once()
-        for target in targets:
-            group_amount = len(calc_once.get_populations())
-            bound = Bounds(np.zeros(group_amount), calc_once.getc_s_eff())
-            linearconstraint = LinearConstraint(calc_once.get_populations(), 
-                                                np.zeros(1), np.array([_daily_vac_p]))
-            init_strategy = calc_once.getc_s_eff() * _daily_vac_p \
-            / (calc_once.getc_s_eff() @ calc_once.get_populations())
-            while True:
-                _vac_res = minimize(calc_once.get_vac_x, init_strategy, 
-                                    args = (vac_times, vac_duration, consequent_step, target), method='SLSQP',
-                                    jac = None, options={'ftol': 1e-16, 'disp': True, 'maxiter':100000},
-                                    constraints = linearconstraint, bounds = bound)
-                if _vac_res.success == True:
-                    break
-                init_strategy = calc_once.getc_s_eff() * _daily_vac_p \
-                / (calc_once.getc_s_eff() @ calc_once.get_populations()) * np.random.uniform(0.5, 1)
-            _vac_amount_alloc = (_vac_res.x * _population_amounts).astype(np.int64)
-            for j in np.argsort(_vac_res.x * _population_amounts - _vac_amount_alloc):
-                if _vac_amount_alloc.sum() == daily_vac_amount:
-                    break
-                _vac_amount_alloc[j] += 1
-            simu_once = ms.simu(**_simu_structure_params)
-            simu_once.set_generator_seed(_idx)
-            simu_once.set_total_spreading_params(_simu_spreading_params[0], _simu_spreading_params[1],
-                                                 _simu_spreading_params[2], _simu_spreading_params[3])
-            simu_once.set_amount_seeds(_amount_seeds)
-            for j in range(len(_i_in_data)):
-                simu_once.spread_once()
-            for j in range(vac_times):
-                simu_once.add_vaccine(_vac_amount_alloc)
-                for _j in range(vac_duration):
-                    simu_once.spread_once()
-            simu_data[way][target] = [simu_once.get_x_amount(target) / simu_once.get_node_amount()]
-            simu_once.spread_to_end()
-            simu_data[way][target].append(simu_once.get_x_amount(target) / simu_once.get_node_amount())
-            del simu_once
-    return simu_data
-###############################################################################
-
-
-
-def get_fitting_data_revision(_idx, _spreading_params, _k, _amount_seeds, 
-             simu_structure_params,
-             fitting_level= 0.1):
-    
-    ################ initialize the simulation model ##########################
-    _simu_structure_params = deepcopy(simu_structure_params)
-    _simu_structure_params['k'] = _k
-    simu_once = ms.simu(**_simu_structure_params)
-    simu_once.set_generator_seed(_idx)
-    simu_once.set_spreading_func('weibull', 'weibull')
-    simu_once.set_total_spreading_params(_spreading_params[:2],
-                                         _spreading_params[2:])
-    simu_once.set_amount_seeds(_amount_seeds)
-    ###########################################################################
-    
-    #################### get the simulation data ##############################
-    _simu_once_data = {'s': [], 'i': [], 'r': [], 'w': [], 'c': [], 'd': [], 'y': []}
-    _simu_once_arr_data = {'c': []}
-    for _target in _simu_once_data.keys():
-        _simu_once_data[_target].append(simu_once.get_x_amount(_target) / simu_once.get_node_amount())
-    _simu_once_arr_data['c'].append(np.array(simu_once.get_x_amount_arr('c')) / np.array(simu_once.get_population_amounts()))
-    while True:
-        if simu_once.get_i_amount() == 0:
-            break
-        simu_once.spread_once()
-        for _target in _simu_once_data.keys():
-            _simu_once_data[_target].append(simu_once.get_x_amount(_target) / simu_once.get_node_amount())
-        _simu_once_arr_data['c'].append(np.array(simu_once.get_x_amount_arr('c')) / np.array(simu_once.get_population_amounts()))
-    for _target in _simu_once_data.keys():
-        _simu_once_data[_target] = np.array(_simu_once_data[_target])
-    _simu_once_arr_data['c'] = np.array(_simu_once_arr_data['c'])
-    del simu_once
-    ###########################################################################
-    
-    ##################### get the simulation data for fitting #################
-    _fitting_data = {'confirmed': [], 'removal': [], 'confirmed_arr': []}
-    _fitting_end_c = (_simu_once_data['c'][-1] - _simu_once_data['c'][0]) * fitting_level + _simu_once_data['c'][0]
-    for _i in range(len(_simu_once_data['c'])):
-        _fitting_data['confirmed'].append(_simu_once_data['c'][_i])
-        _fitting_data['removal'].append(_simu_once_data['r'][_i])
-        _fitting_data['confirmed_arr'].append(_simu_once_arr_data['c'][_i])
-        if _fitting_data['confirmed'][-1] > _fitting_end_c:
-            break
-    _fitting_data['confirmed'] = np.array(_fitting_data['confirmed'])
-    _fitting_data['removal'] = np.array(_fitting_data['removal'])
-    _fitting_data['confirmed_arr'] = np.array(_fitting_data['confirmed_arr'])
-    _i_in_data = np.append(_fitting_data['confirmed_arr'][0:1], 
-                           np.diff(_fitting_data['confirmed_arr'], axis = 0), axis = 0)
-    ###########################################################################
-    
-    return {'i_in_data': _i_in_data, 'simu_curves': _simu_once_data}
-
-def get_v_data_revision(_idx, _simu_spreading_params, spreading_len,
+def get_v_with_real(_idx, _simu_spreading_params, _fitting_spreading_params, spreading_len,
                _i_in_data, _k, _amount_seeds, 
-               simu_structure_params, 
+               simu_structure_params, calc_params, 
                daily_vac_amount, vac_times = 7, vac_duration = 24, occur_length = 4000):
     
-    def _get_alloc(s_arr, vac_amount, vac_group = None, adjust = True):
-        if vac_group is None or len(vac_group) == 0:
-            return None
-        if adjust:
-            vac_alloc = np.zeros(len(s_arr), dtype = np.int64)
-        else:
-            vac_alloc = np.zeros(len(s_arr))
-        if s_arr[vac_group].sum() == 0:
-            proportion = np.ones(len(vac_group)) / len(vac_group)
-        else:
-            proportion = s_arr[vac_group] / s_arr[vac_group].sum()
-        if adjust:
-            vac_alloc_tmp = (proportion * vac_amount).astype(np.int32)
-            for i in np.argsort(proportion * vac_amount - vac_alloc_tmp)[::-1]:
-                vac_alloc_tmp[i] += 1
-                if vac_alloc_tmp.sum() == vac_amount:
-                    break
-            vac_alloc[vac_group] = vac_alloc_tmp
-        else:
-            vac_alloc[vac_group] = proportion * vac_amount
-        return vac_alloc
-    
     vac_groups = {'no_vaccine': None, 'under_20': np.arange(0, 2).tolist(), 
                   '20-49': np.arange(2, 5).tolist(), 
                   '20+': np.arange(2, 8).tolist(), '60+': np.arange(6, 8).tolist(), 
@@ -1508,125 +1210,11 @@ def get_v_data_revision(_idx, _simu_spreading_params, spreading_len,
     vac_dates = [len(_i_in_data) + i * vac_duration for i in range(vac_times)]
     spreading_length = max(vac_dates[-1] + 30 * 24, spreading_len)
     
-    _simu_structure_params = deepcopy(simu_structure_params)
-    _simu_structure_params['k'] = _k
-    simu_data = {'no_vaccine': None, 'under_20': None, '20-49': None, '20+': None,'60+': None, 'all_ages': None}
-    for vac_group_key in vac_groups.keys():
-        simu_data[vac_group_key] = {'s': [], 'i': [], 'r': [], 'w': [], 'c': [], 'd': [], 'y': []}
-        _simu_structure_params = deepcopy(simu_structure_params)
-        _simu_structure_params['k'] = _k
-        simu_once = ms.simu(**_simu_structure_params)
-        simu_once.set_generator_seed(_idx)
-        simu_once.set_spreading_func('weibull', 'weibull')
-        simu_once.set_total_spreading_params([_simu_spreading_params[0], _simu_spreading_params[1]],
-                                             [_simu_spreading_params[2], _simu_spreading_params[3]])
-        simu_once.set_amount_seeds(_amount_seeds)
-        for _target in simu_data[vac_group_key].keys():
-            simu_data[vac_group_key][_target].append(simu_once.get_x_amount(_target) / simu_once.get_node_amount())
-        for i in range(spreading_length - 1):
-            if i in vac_dates:
-                vac_alloc_simu = _get_alloc(np.array(simu_once.get_s_amount_arr()),
-                                            daily_vac_amount, vac_groups[vac_group_key])
-                if vac_alloc_simu is not None:
-                    simu_once.add_vaccine(vac_alloc_simu)
-            simu_once.spread_once()
-            for _target in simu_data[vac_group_key].keys():
-                simu_data[vac_group_key][_target].append(simu_once.get_x_amount(_target) / simu_once.get_node_amount())
-        for _target in simu_data[vac_group_key].keys():
-            simu_data[vac_group_key][_target] = np.array(simu_data[vac_group_key][_target])
-        del simu_once
-    
-    return {'simu_data': simu_data}
-
-def get_general_fitting_data_revision(_idx, _spreading_survivals, _k, _amount_seeds, 
-             simu_structure_params,
-             fitting_level= 0.1):
-    
-    ################ initialize the simulation model ##########################
     _simu_structure_params = deepcopy(simu_structure_params)
     _simu_structure_params['k'] = _k
     simu_once = ms.simu(**_simu_structure_params)
-    simu_once.set_generator_seed(_idx)
-    simu_once.set_spreading_func('general', 'general')
-    simu_once.set_total_spreading_params([_spreading_survivals[2],], [_spreading_survivals[2],])
-    simu_once.set_total_spreading_survivals(_spreading_survivals[0], _spreading_survivals[1])
-    simu_once.set_amount_seeds(_amount_seeds)
-    ###########################################################################
-    
-    #################### get the simulation data ##############################
-    _simu_once_data = {'s': [], 'i': [], 'r': [], 'w': [], 'c': [], 'd': [], 'y': []}
-    _simu_once_arr_data = {'c': []}
-    for _target in _simu_once_data.keys():
-        _simu_once_data[_target].append(simu_once.get_x_amount(_target) / simu_once.get_node_amount())
-    _simu_once_arr_data['c'].append(np.array(simu_once.get_x_amount_arr('c')) / np.array(simu_once.get_population_amounts()))
-    while True:
-        if simu_once.get_i_amount() == 0:
-            break
-        simu_once.spread_once()
-        for _target in _simu_once_data.keys():
-            _simu_once_data[_target].append(simu_once.get_x_amount(_target) / simu_once.get_node_amount())
-        _simu_once_arr_data['c'].append(np.array(simu_once.get_x_amount_arr('c')) / np.array(simu_once.get_population_amounts()))
-    for _target in _simu_once_data.keys():
-        _simu_once_data[_target] = np.array(_simu_once_data[_target])
-    _simu_once_arr_data['c'] = np.array(_simu_once_arr_data['c'])
+    _node_amount = simu_once.get_node_amount()
     del simu_once
-    ###########################################################################
-    
-    ##################### get the simulation data for fitting #################
-    _fitting_data = {'confirmed': [], 'removal': [], 'confirmed_arr': []}
-    _fitting_end_c = (_simu_once_data['c'][-1] - _simu_once_data['c'][0]) * fitting_level + _simu_once_data['c'][0]
-    for _i in range(len(_simu_once_data['c'])):
-        _fitting_data['confirmed'].append(_simu_once_data['c'][_i])
-        _fitting_data['removal'].append(_simu_once_data['r'][_i])
-        _fitting_data['confirmed_arr'].append(_simu_once_arr_data['c'][_i])
-        if _fitting_data['confirmed'][-1] > _fitting_end_c:
-            break
-    _fitting_data['confirmed'] = np.array(_fitting_data['confirmed'])
-    _fitting_data['removal'] = np.array(_fitting_data['removal'])
-    _fitting_data['confirmed_arr'] = np.array(_fitting_data['confirmed_arr'])
-    _i_in_data = np.append(_fitting_data['confirmed_arr'][0:1], 
-                           np.diff(_fitting_data['confirmed_arr'], axis = 0), axis = 0)
-    ###########################################################################
-    
-    return {'i_in_data': _i_in_data, 'simu_curves': _simu_once_data}
-
-def get_general_v_data_revision(_idx, _spreading_survivals, spreading_len,
-               _i_in_data, _k, _amount_seeds, 
-               simu_structure_params, 
-               daily_vac_amount, vac_times = 7, vac_duration = 24):
-    
-    def _get_alloc(s_arr, vac_amount, vac_group = None, adjust = True):
-        if vac_group is None or len(vac_group) == 0:
-            return None
-        if adjust:
-            vac_alloc = np.zeros(len(s_arr), dtype = np.int64)
-        else:
-            vac_alloc = np.zeros(len(s_arr))
-        if s_arr[vac_group].sum() == 0:
-            proportion = np.ones(len(vac_group)) / len(vac_group)
-        else:
-            proportion = s_arr[vac_group] / s_arr[vac_group].sum()
-        if adjust:
-            vac_alloc_tmp = (proportion * vac_amount).astype(np.int32)
-            for i in np.argsort(proportion * vac_amount - vac_alloc_tmp)[::-1]:
-                vac_alloc_tmp[i] += 1
-                if vac_alloc_tmp.sum() == vac_amount:
-                    break
-            vac_alloc[vac_group] = vac_alloc_tmp
-        else:
-            vac_alloc[vac_group] = proportion * vac_amount
-        return vac_alloc
-
-    
-    vac_groups = {'no_vaccine': None, 'under_20': np.arange(0, 2).tolist(), 
-                  '20-49': np.arange(2, 5).tolist(), 
-                  '20+': np.arange(2, 8).tolist(), '60+': np.arange(6, 8).tolist(), 
-                  'all_ages': np.arange(0, 8).tolist()}
-    vac_dates = [len(_i_in_data) + i * vac_duration for i in range(vac_times)]
-    spreading_length = max(vac_dates[-1] + 30 * 24, spreading_len)
-    
-    _simu_structure_params = deepcopy(simu_structure_params)
-    _simu_structure_params['k'] = _k
     simu_data = {'no_vaccine': None, 'under_20': None, '20-49': None, '20+': None,'60+': None, 'all_ages': None}
     for vac_group_key in vac_groups.keys():
         simu_data[vac_group_key] = {'s': [], 'i': [], 'r': [], 'w': [], 'c': [], 'd': [], 'y': []}
@@ -1635,15 +1223,14 @@ def get_general_v_data_revision(_idx, _spreading_survivals, spreading_len,
         simu_once = ms.simu(**_simu_structure_params)
         simu_once.set_generator_seed(_idx)
         simu_once.set_spreading_func('general', 'general')
-        simu_once.set_total_spreading_params([_spreading_survivals[2],], [_spreading_survivals[2],])
-        simu_once.set_total_spreading_survivals(_spreading_survivals[0], _spreading_survivals[1])
+        simu_once.set_total_spreading_params([_simu_spreading_params['step_inf'],], [_simu_spreading_params['step_rem'],])
+        simu_once.set_total_spreading_survivals(_simu_spreading_params['srv_inf'], _simu_spreading_params['srv_rem'])
         simu_once.set_amount_seeds(_amount_seeds)
         for _target in simu_data[vac_group_key].keys():
             simu_data[vac_group_key][_target].append(simu_once.get_x_amount(_target) / simu_once.get_node_amount())
         for i in range(spreading_length - 1):
             if i in vac_dates:
-                vac_alloc_simu = _get_alloc(np.array(simu_once.get_s_amount_arr()),
-                                            daily_vac_amount, vac_groups[vac_group_key])
+                vac_alloc_simu = func.get_alloc(np.array(simu_once.get_s_amount_arr()), _simu_structure_params['populations'], daily_vac_amount, vac_groups[vac_group_key])
                 if vac_alloc_simu is not None:
                     simu_once.add_vaccine(vac_alloc_simu)
             simu_once.spread_once()
@@ -1653,24 +1240,39 @@ def get_general_v_data_revision(_idx, _spreading_survivals, spreading_len,
             simu_data[vac_group_key][_target] = np.array(simu_data[vac_group_key][_target])
         del simu_once
     
+    calc_data = {'no_vaccine': {}, 'under_20': {}, '20-49': {}, '20+': {}, '60+': {}, 'all_ages': {}}
+    for vac_group_key in vac_groups.keys():
+        calc_once = []
+        _srv_func = [func.srv_exponent, func.srv_weibull_scale, func.srv_gamma_scale]
+        _inf_params = [(_fitting_spreading_params['exponent_inf'],),
+                      (_fitting_spreading_params['weibull_alpha_inf'], _fitting_spreading_params['weibull_beta_inf'])]
+        _rem_params = [(_fitting_spreading_params['exponent_rem'],),
+                      (_fitting_spreading_params['weibull_alpha_rem'], _fitting_spreading_params['weibull_beta_rem'])]
+        for i in range(2):
+            _calc_params = deepcopy(calc_params)
+            vgnr_inf = gnr(_srv_func[i], 'func', _inf_params[i])
+            vgnr_rem = gnr(_srv_func[i], 'func', _rem_params[i])
+            _calc_params['occur_inf'] = occur(vgnr_inf, vgnr_type = 'srv', length = occur_length, step = _calc_params['step'])
+            _calc_params['occur_rem'] = occur(vgnr_rem, vgnr_type = 'srv', length = occur_length, step = _calc_params['step'])
+            _calc_params['k'] = _k
+            calc_once.append(sir_model(**_calc_params))
+            calc_once[i].set_i_in_init(_i_in_data)
+            for j in range(len(_i_in_data) - 1, spreading_length - 1):
+                if j in vac_dates:
+                    vac_alloc_calc = func.get_alloc(np.array(calc_once[i].getc_s_eff()), _calc_params['populations'], daily_vac_amount / _node_amount, vac_groups[vac_group_key], 
+                                                adjust = False)
+                    if vac_alloc_calc is not None:
+                        calc_once[i].add_vaccine(vac_alloc_calc / calc_once[i].get_populations())
+                calc_once[i].spread_once()
+        for _target in ['s', 'i', 'r', 'c', 'd', 'y']:
+            calc_data[vac_group_key]['exponent_' + _target] = calc_once[0].get_x_tot(_target)
+            calc_data[vac_group_key]['weibull_' + _target] = calc_once[1].get_x_tot(_target)
+        calc_data[vac_group_key]['exponent_w'] = calc_data[vac_group_key]['exponent_r'] - calc_data[vac_group_key]['exponent_d']
+        calc_data[vac_group_key]['weibull_w'] = calc_data[vac_group_key]['weibull_r'] - calc_data[vac_group_key]['weibull_d']
+        del calc_once
     
-    return {'simu_data': simu_data}
-
-
-
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
+    return {'simu_data': simu_data, 'calc_data': calc_data}
+###############################################################################
         
         
         

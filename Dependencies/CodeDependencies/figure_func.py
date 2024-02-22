@@ -159,8 +159,8 @@ def figure_theories(_figure_theories_data):
     leg.get_lines()[0].set_alpha(1)
     ax.text(0.21  * eig_max, 0.4, 'Absorbing\nPhase', fontsize=10, horizontalalignment= 'center')
     ax.text(1.2 * eig_max, 0.45, 'Active Phase', fontsize=10, horizontalalignment= 'center')
-    ax.axvspan(0, 1, ymin = -1/25, alpha = 0.2, color='tab:green', linewidth = 0)
-    ax.axvspan(1, 5 * (24 / 25), ymin = -1/25, alpha = 0.2, color='tab:red', linewidth = 0)
+    ax.axvspan(0, 1, ymin = -1/25, alpha = 0.15, color='tab:green', linewidth = 0)
+    ax.axvspan(1, 5 * (24 / 25), ymin = -1/25, alpha = 0.15, color='tab:red', linewidth = 0)
     
     markevery_list = [150, 75]
     for i in range(2):
@@ -519,12 +519,12 @@ def figure_forecasting(_figure_forecasting_data, _fitting_period_data):
     
     plt.axhline(0, color = 'tab:gray', linestyle = ':', linewidth = 2)
     plt.axvline(0, color = 'tab:gray', linestyle = '--', linewidth = 2)
-    xlim_left, xlim_right = -1 - 3 / 25, 2.0
-    ylim_lower, ylim_upper = -0.8 - 1.6 / 25, 0.8
-    ax.axvspan(xlim_left, 0, ymin=0, ymax=(0 - ylim_lower) / (ylim_upper - ylim_lower), alpha=0.2, color='tab:blue')
-    ax.axvspan(0, xlim_right, ymin=(0 - ylim_lower) / (ylim_upper - ylim_lower), ymax=1, alpha=0.2, color='tab:orange')
-    ax.axvspan(xlim_left, 0, ymin=(0 - ylim_lower) / (ylim_upper - ylim_lower), ymax=1, alpha=0.2, color='tab:red')
-    ax.axvspan(0, xlim_right, ymin=0, ymax=(0 - ylim_lower) / (ylim_upper - ylim_lower), alpha=0.2, color='tab:green')
+    #xlim_left, xlim_right = -1 - 3 / 25, 2.0
+    #ylim_lower, ylim_upper = -0.8 - 1.6 / 25, 0.8
+    #ax.axvspan(xlim_left, 0, ymin=0, ymax=(0 - ylim_lower) / (ylim_upper - ylim_lower), alpha=0.2, color='tab:blue')
+    #ax.axvspan(0, xlim_right, ymin=(0 - ylim_lower) / (ylim_upper - ylim_lower), ymax=1, alpha=0.2, color='tab:orange')
+    #ax.axvspan(xlim_left, 0, ymin=(0 - ylim_lower) / (ylim_upper - ylim_lower), ymax=1, alpha=0.2, color='tab:red')
+    #ax.axvspan(0, xlim_right, ymin=0, ymax=(0 - ylim_lower) / (ylim_upper - ylim_lower), alpha=0.2, color='tab:green')
     plt.text(0.12, 0.92, r'(i). $T_{\mathrm{gen}} < T_{\mathrm{rem}}$' + '\n' + 'overestimate', 
              color = 'tab:red', weight = 'bold', transform = ax.transAxes)
     plt.text(0.42, 0.92, r'(ii). $T_{\mathrm{gen}} > T_{\mathrm{rem}}$' + '\n' + 'overestimate', 
@@ -724,8 +724,8 @@ def figure_prevention(_figure_prevention_data, _fitting_period_data):
         xlim_left, xlim_right = -1.0 - 3 / 25, 2.0
         plt.xlim(xlim_left, xlim_right)
         plt.ylim(ymin = 0)
-        ax.axvspan(xlim_left, 0, ymin=0, ymax=1, alpha=0.2, color='tab:blue')
-        ax.axvspan(0, xlim_right, ymin=0, ymax=1, alpha=0.2, color='tab:orange')
+        #ax.axvspan(xlim_left, 0, ymin=0, ymax=1, alpha=0.2, color='tab:blue')
+        #ax.axvspan(0, xlim_right, ymin=0, ymax=1, alpha=0.2, color='tab:orange')
         if type_idx == 0:
             plt.text(0.12, 0.03, r'(i). $T_{\mathrm{gen}} < T_{\mathrm{rem}}$', 
                      color = 'tab:blue', weight = 'bold', transform = ax.transAxes)
@@ -816,7 +816,7 @@ def si_figure_percentile(_si_figure_percentile_data):
             for lh in leg.legendHandles: 
                 lh.set_markersize(8)
     
-    titles = [['10 pencentile','90 percentile'], [r'50 percentile with different $\tilde{c}$', r'5 percentile with different $\tilde{c}$']]        
+    titles = [['10 percentile','90 percentile'], [r'50 percentile with different $\tilde{c}$', r'5 percentile with different $\tilde{c}$']]        
     idx_titles = [['a', 'b'], ['c', 'd']]
     xlabels = [[r'$\ln{\eta}$', r'$\ln{\eta}$'], [r'$\ln{\eta}$', r'$\ln{\eta}$']]
     ylabels = [[r'$\varepsilon$', r'$\varepsilon$'], [r'$\varepsilon$', r'$\varepsilon$']]
@@ -983,8 +983,8 @@ def figure_prevention_opt(_figure_prevention_opt_data):
         xlim_left, xlim_right = -1.0 - 3 / 25, 2.0
         plt.xlim(xlim_left, xlim_right)
         plt.ylim(ymin = 0)
-        ax.axvspan(xlim_left, 0, ymin=0, ymax=1, alpha=0.2, color='tab:blue')
-        ax.axvspan(0, xlim_right, ymin=0, ymax=1, alpha=0.2, color='tab:orange')
+        #ax.axvspan(xlim_left, 0, ymin=0, ymax=1, alpha=0.2, color='tab:blue')
+        #ax.axvspan(0, xlim_right, ymin=0, ymax=1, alpha=0.2, color='tab:orange')
         plt.text(0.12, 0.92, r'(i). $T_{\mathrm{gen}} < T_{\mathrm{rem}}$', 
                  color = 'tab:blue', weight = 'bold', transform = ax.transAxes)
         plt.text(0.38, 0.92, r'(ii). $T_{\mathrm{gen}} > T_{\mathrm{rem}}$', 
