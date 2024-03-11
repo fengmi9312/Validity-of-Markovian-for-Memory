@@ -117,6 +117,6 @@ The total cumulative infected fraction at steady state, $\tilde{c}$, can be calc
 $$\tilde{c} = \sum_{l=0}^{n}{\tilde{c}_lp_l}.$$
 
 #### Reference
-1. [Feng, M., Tian, L., Lai, Y.-C. & Zhou, C. Validity of Markovian modeling for transient memory-dependent epidemic dynamics. arXiv:2306.16864 (2023)](https://arxiv.org/abs/2306.16864).
-2. [Prem, K., Cook, A. R. & Jit, M. Projecting social contact matrices in 152 countries using contact surveys and demographic data. PLoS Comput. Biol. 13, e1005697 (2017)](https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1005697).
+1. [Feng, M., Tian, L., Lai, Y.-C. & Zhou, C. Validity of Markovian modeling for transient memory-dependent epidemic dynamics. *Commun. Phys.* **7**, 86 (2024)](https://doi.org/10.1038/s42005-024-01578-w).
+2. [Prem, K., Cook, A. R. & Jit, M. Projecting social contact matrices in 152 countries using contact surveys and demographic data. *PLoS Comput. Biol.* **13**, e1005697 (2017)](https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1005697).
 3. [United Nations, Department of Economic and Social Affairs, Population Division. World population prospects 2019 (2021). Accessed on 29 June 2021](https://population.un.org/wpp/).
